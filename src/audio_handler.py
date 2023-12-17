@@ -62,7 +62,6 @@ plt functions
 of the threads is holding onto the lock and preventing other threads from using it
     - regardless, expect issues since even if the lock worked, the threads would queue up to edit the plot, 
     which would lead to delays between sounds heard and seen on soundwave
-- also, 
 '''
 class audio_visualiser:
     def __init__(self):
