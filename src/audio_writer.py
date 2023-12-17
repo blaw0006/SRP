@@ -8,6 +8,7 @@ from audio_common_msgs.msg import AudioData as inputMsg
 from io import BytesIO
 from StringIO import StringIO
 from threading import Lock
+import time
 
 '''
 Writer node that extracts data from rostopic and saves it
@@ -15,11 +16,9 @@ Writer node that extracts data from rostopic and saves it
 - np.savez cannot be used to add multiple arrays to the same npz file on separate calls, must all be in one call
 - instead, attempted to append + save all data into an instance variable, then add it to an np file in one go
 
-# plot data to check if the raw data is valid,
-# also try writing to a file to save it (for data collection purposes)
-# next step is to allow running of this node for multiple inputs 
-# Why is only one set of values being plotted despite the pcm data changing constantly? Either
-# the function is only being called once in this scenario, or variable is not being updated (but it should be since instance variable)
+TODO
+- allow running of this node for multiple inputs (setup roslaunch file that runs several nodes that subscribe to different topics)
+- choose correct rate to divide np.arange by 
 '''
 class audio_visualiser:
     def __init__(self):
@@ -85,8 +84,15 @@ class audio_visualiser:
         #np.savez("src/ur5_control/src/bruh.npz", self.data, self.count)
         np.save("src/ur5_control/src/bruh.npy", self.data)
         
+        # stop timing
+        end = time.time()
+        print(end - start)
+        
     
 if __name__ == '__main__':
+    # start timing
+    start = time.time()
+    
     vis = audio_visualiser()    
 
     # vis.visualise_audio() # calls the visualise method explicitly + separately from the callback. Calling 
@@ -96,10 +102,13 @@ if __name__ == '__main__':
     # save appended data arrays after shutdown
     rospy.on_shutdown(vis.shutdown_callback)
     
+    
+    
+    
     # keeps the node running until interrupted (ctrl-c)
     rospy.spin()
     
    
-    
+    # 6326 6298 6491 6500 6200 6400
     
     

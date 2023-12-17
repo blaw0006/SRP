@@ -19,9 +19,11 @@ def audio_reader(file):
     figure, axis = plt.subplots()
     
     print(len(data))
-    time = np.arange(0,len(data)) # size of pcm np_array is variable 
+    time = np.arange(0,len(data)).astype(float)/6300 # size of pcm np_array is variable 
     time_array = np.array([])
     time_array = np.append(time_array, time)
+    
+    print(time_array)
     print(np.shape(time_array))
     
     # Plotting and titles
