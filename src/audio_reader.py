@@ -8,6 +8,7 @@ from audio_common_msgs.msg import AudioData as inputMsg
 from io import BytesIO
 from StringIO import StringIO
 from threading import Lock
+from scipy.signal import butter, lfilter
 
 def audio_reader(file):
     # exit condition: 
@@ -45,6 +46,41 @@ def audio_reader(file):
         array = data[key]
         print(array)
     '''
+    
+    def butter_bandpass(self, lowcut, highcut, fs, order=5):
+        ''' Helper function that computes filter coefficients for caller 
+        From: https://scipy-cookbook.readthedocs.io/items/ButterworthBandpass.html
+        Inputs
+            lowcut: lower bound for frequency for high pass filter
+            highcut: upper bound for frequency for low pass filter
+            fs: sampling frequency
+        Outputs
+            a, b: filter coefficients used in the digital filter later 
+        '''
+        nyq = 0.5 * fs
+        low = lowcut / nyq
+        high = highcut / nyq
+        b, a = butter(order, [low, high], btype='band')
+        return b, a
+
+
+    def butter_bandpass_filter(self, data, lowcut, highcut, fs, order=5):
+        ''' Function that applies a butter bandpass filter to input data
+        From: https://scipy-cookbook.readthedocs.io/items/ButterworthBandpass.html
+        
+        Inputs
+            data: data to be filtered
+            lowcut: lower bound for frequency for high pass filter
+            highcut: upper bound for frequency for low pass filter
+            fs: sampling frequency
+            order: sharpness of cutoff, see https://stackoverflow.com/questions/12093594/how-to-implement-band-pass-butterworth-filter-with-scipy-signal-butter
+        Outputs
+            y: the filtered data 
+        
+        '''
+        b, a = self.butter_bandpass(lowcut, highcut, fs, order=order)
+        y = lfilter(b, a, data)
+        return y
     
 if __name__ == '__main__':
     '''

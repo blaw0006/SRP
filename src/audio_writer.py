@@ -18,7 +18,25 @@ Writer node that extracts data from rostopic and saves it
 
 TODO
 - allow running of this node for multiple inputs (setup roslaunch file that runs several nodes that subscribe to different topics)
-- choose correct rate to divide np.arange by 
+- fix the noise !!
+
+Ideas for noise
+- could be arecord settings, might need to specify rate or high quality or something
+    - audio_capture uses arecord, but the settings seem to match correctly
+- quality loss due to mp3 compression - could try record directly to wav somehow, rather than converting from mp3?
+- might need to apply filters
+
+Alternative methods 
+- recording directly to bagfile and using audio_convert to wav (essentially the same, but less steps)
+    - https://answers.ros.org/question/281340/extract-audio-data-from-a-bagfile-into-mp3-or-wav-format/
+    - https://github.com/sbrodeur/ros-audio-convert
+    
+Filtering
+- Butterworth Bandpass filter recipe
+    - scroll down for amendments and notes for the accepted answer
+    https://stackoverflow.com/questions/12093594/how-to-implement-band-pass-butterworth-filter-with-scipy-signal-butter
+    https://scipy-cookbook.readthedocs.io/items/ButterworthBandpass.html
+    
 '''
 class audio_visualiser:
     def __init__(self):
