@@ -123,5 +123,7 @@ if __name__ == '__main__':
     print(data[y])
     print(data[z])
     '''
-    audio_reader("src/ur5_control/src/bruh.npy")
+    #audio_reader("src/ur5_control/src/bruh.npy")
+    #audio_reader("src/ur5_control/src/mic1_test1.npy")
     
+    audio_reader("src/ur5_control/src/mic2_test1.npy")

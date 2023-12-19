@@ -40,6 +40,7 @@ Filtering
 Questions
 - why is the amplitude so large?
 - Do I need to amplify the signal? Did the Panotti ppl amplify theirs using the sound recorder?
+    Probably yes. Not an option for me because sound recorders are expensive and preamps don't allow for 6 mics.
 
 Ideas for multiple mics
 - take command line input for topic to subscribe to + file to write to
@@ -50,18 +51,18 @@ Ideas for multiple mics
             file_to_write = bruh1
             instance = audio_visualiser(bruh, bruh1)
 - audio_reader just needs another python script that calls the audio_reader functions on the files that have been
-written to
+written to - can be hardcoded with filenames 
 '''
 class audio_visualiser:
-    def __init__(self, topic):
-        rospy.init_node('audio_handler', anonymous=True)
+    def __init__(self, topic, file_to_write):
+        rospy.init_node('audio_handler', anonymous=True) # avoid duplicate node names with anonymous=True
         rospy.Subscriber(topic, inputMsg, self.audio_callback)
         #self.audio_data = None
         self.pcm = None 
         self.data = np.array([]) # initialise empty np array
         #self.count = np.array(0) # counter to be used as key for np.savez input
         self.count = 0
-        
+        self.file_to_write = file_to_write
         self.lock = Lock() # create threadlock for thread synchronisation
         
         
@@ -83,8 +84,7 @@ class audio_visualiser:
             channels=1
         )
         
-        #self.pcm = np.array(audio_segment.get_array_of_samples())
-        audio_segment.export("audio_output.wav", format="wav") # export to wav format 
+        #audio_segment.export("audio_output.wav", format="wav") # export to wav format 
         
         # hidden instance variable containing raw wav data after conversion 
         wav_data = audio_segment._data
@@ -113,8 +113,8 @@ class audio_visualiser:
     def shutdown_callback(self):
         print(self.data)
         print(np.shape(self.data))
-        #np.savez("src/ur5_control/src/bruh.npz", self.data, self.count)
-        np.save("src/ur5_control/src/bruh.npy", self.data)
+        #np.save("src/ur5_control/src/bruh.npy", self.data)
+        np.save(self.file_to_write, self.data)
         
         # stop timing
         end = time.time()
@@ -125,14 +125,21 @@ if __name__ == '__main__':
     # start timing
     start = time.time()
     
-    vis = audio_visualiser('/t1/audio')    
+    test = str(input("Enter test number: "))
+    
+    file1 = "src/ur5_control/src/two_mic_tests/mic1_test" + test + ".npy"
+    file2 = "src/ur5_control/src/two_mic_tests/mic2_test" + test + ".npy"
+    
+    vis1 = audio_visualiser('/t1/audio', file1)    
+    vis2 = audio_visualiser('/t2/audio', file2)
 
     # vis.visualise_audio() # calls the visualise method explicitly + separately from the callback. Calling 
     # within the callback makes more sense here since the visualisation is tied to the data being processed in callback
     
     
     # save appended data arrays after shutdown
-    rospy.on_shutdown(vis.shutdown_callback)
+    rospy.on_shutdown(vis1.shutdown_callback)
+    rospy.on_shutdown(vis2.shutdown_callback)
     
     # keeps the node running until interrupted (ctrl-c)
     rospy.spin()
