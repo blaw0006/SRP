@@ -51,12 +51,12 @@ def audio_reader(file):
     figure, axis = plt.subplots()
     
     print(len(data))
-    time = np.arange(0,len(data)).astype(float)/6300 # size of pcm np_array is variable 
+    time = np.arange(0,len(data)).astype(float)/6300 # size of pcm np_array is variable, specify float or it rounds to int
     time_array = np.array([])
     time_array = np.append(time_array, time)
     
     # Apply bandpass filter
-    lowcut = 20 # <10Hz is on the floor sounds
+    lowcut = 20 # <10Hz is on the floor sounds, 20 seems to be the best 
     highcut = 190 # >200Hz is over the air sounds. 190 seems to be the lowest it can go without filtering everything
     sample_rate = 6300 # approximate, may need to change
     
