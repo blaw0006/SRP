@@ -40,13 +40,22 @@ Filtering
 Questions
 - why is the amplitude so large?
 - Do I need to amplify the signal? Did the Panotti ppl amplify theirs using the sound recorder?
-Github access token
-    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
+
+Ideas for multiple mics
+- take command line input for topic to subscribe to + file to write to
+- in if name==main block, have a series of preset topics + files to write to under different names, and the user
+    just needs to input a number e.g. 1 
+        if [input] == 1, then
+            topic = bruh
+            file_to_write = bruh1
+            instance = audio_visualiser(bruh, bruh1)
+- audio_reader just needs another python script that calls the audio_reader functions on the files that have been
+written to
 '''
 class audio_visualiser:
-    def __init__(self):
+    def __init__(self, topic):
         rospy.init_node('audio_handler', anonymous=True)
-        rospy.Subscriber('/t1/audio', inputMsg, self.audio_callback)
+        rospy.Subscriber(topic, inputMsg, self.audio_callback)
         #self.audio_data = None
         self.pcm = None 
         self.data = np.array([]) # initialise empty np array
@@ -116,7 +125,7 @@ if __name__ == '__main__':
     # start timing
     start = time.time()
     
-    vis = audio_visualiser()    
+    vis = audio_visualiser('/t1/audio')    
 
     # vis.visualise_audio() # calls the visualise method explicitly + separately from the callback. Calling 
     # within the callback makes more sense here since the visualisation is tied to the data being processed in callback
@@ -124,9 +133,6 @@ if __name__ == '__main__':
     
     # save appended data arrays after shutdown
     rospy.on_shutdown(vis.shutdown_callback)
-    
-    
-    
     
     # keeps the node running until interrupted (ctrl-c)
     rospy.spin()
