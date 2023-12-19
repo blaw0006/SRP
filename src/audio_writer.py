@@ -36,7 +36,12 @@ Filtering
     - scroll down for amendments and notes for the accepted answer
     https://stackoverflow.com/questions/12093594/how-to-implement-band-pass-butterworth-filter-with-scipy-signal-butter
     https://scipy-cookbook.readthedocs.io/items/ButterworthBandpass.html
-    
+
+Questions
+- why is the amplitude so large?
+- Do I need to amplify the signal? Did the Panotti ppl amplify theirs using the sound recorder?
+Github access token
+    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
 '''
 class audio_visualiser:
     def __init__(self):

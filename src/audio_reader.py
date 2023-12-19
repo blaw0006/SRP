@@ -10,19 +10,57 @@ from StringIO import StringIO
 from threading import Lock
 from scipy.signal import butter, lfilter
 
+def butter_bandpass(lowcut, highcut, fs, order=5):
+    ''' Helper function that computes filter coefficients for caller 
+    From: https://scipy-cookbook.readthedocs.io/items/ButterworthBandpass.html
+    Inputs
+        lowcut: lower bound for frequency for high pass filter
+        highcut: upper bound for frequency for low pass filter
+        fs: sampling frequency
+    Outputs
+        a, b: filter coefficients used in the digital filter later 
+    '''
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    b, a = butter(order, [low, high], btype='band')
+    return b, a
+
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+    ''' Function that applies a butter bandpass filter to input data
+    From: https://scipy-cookbook.readthedocs.io/items/ButterworthBandpass.html
+    
+    Inputs
+        data: data to be filtered
+        lowcut: lower bound for frequency for high pass filter
+        highcut: upper bound for frequency for low pass filter
+        fs: sampling frequency
+        order: sharpness of cutoff, see https://stackoverflow.com/questions/12093594/how-to-implement-band-pass-butterworth-filter-with-scipy-signal-butter
+    Outputs
+        y: the filtered data 
+    
+    '''
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
+
 def audio_reader(file):
-    # exit condition: 
-    # load data from file
-    
+    # Load from file
     data = np.load(file)
-    
-    # plot
     figure, axis = plt.subplots()
     
     print(len(data))
     time = np.arange(0,len(data)).astype(float)/6300 # size of pcm np_array is variable 
     time_array = np.array([])
     time_array = np.append(time_array, time)
+    
+    # Apply bandpass filter
+    lowcut = 20 # <10Hz is on the floor sounds
+    highcut = 190 # >200Hz is over the air sounds. 190 seems to be the lowest it can go without filtering everything
+    sample_rate = 6300 # approximate, may need to change
+    
+    data = butter_bandpass_filter(data, lowcut, highcut, sample_rate, order = 5)
     
     print(time_array)
     print(np.shape(time_array))
@@ -47,40 +85,7 @@ def audio_reader(file):
         print(array)
     '''
     
-    def butter_bandpass(self, lowcut, highcut, fs, order=5):
-        ''' Helper function that computes filter coefficients for caller 
-        From: https://scipy-cookbook.readthedocs.io/items/ButterworthBandpass.html
-        Inputs
-            lowcut: lower bound for frequency for high pass filter
-            highcut: upper bound for frequency for low pass filter
-            fs: sampling frequency
-        Outputs
-            a, b: filter coefficients used in the digital filter later 
-        '''
-        nyq = 0.5 * fs
-        low = lowcut / nyq
-        high = highcut / nyq
-        b, a = butter(order, [low, high], btype='band')
-        return b, a
-
-
-    def butter_bandpass_filter(self, data, lowcut, highcut, fs, order=5):
-        ''' Function that applies a butter bandpass filter to input data
-        From: https://scipy-cookbook.readthedocs.io/items/ButterworthBandpass.html
-        
-        Inputs
-            data: data to be filtered
-            lowcut: lower bound for frequency for high pass filter
-            highcut: upper bound for frequency for low pass filter
-            fs: sampling frequency
-            order: sharpness of cutoff, see https://stackoverflow.com/questions/12093594/how-to-implement-band-pass-butterworth-filter-with-scipy-signal-butter
-        Outputs
-            y: the filtered data 
-        
-        '''
-        b, a = self.butter_bandpass(lowcut, highcut, fs, order=order)
-        y = lfilter(b, a, data)
-        return y
+    
     
 if __name__ == '__main__':
     '''
