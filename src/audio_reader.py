@@ -129,6 +129,19 @@ if __name__ == '__main__':
     print(data[z])
     '''
     #audio_reader("src/ur5_control/src/bruh.npy")
-    audio_reader("src/ur5_control/src/two_mic_tests/mic1_test1.npy")
     
-    audio_reader("src/ur5_control/src/two_mic_tests/mic2_test1.npy")
+    # change i range to match the number of tests
+    test_start = input("Enter test start: ")
+    test_end = input("Enter test end: ")
+    
+    for i in range(test_start,test_end+1):
+        filename = "src/ur5_control/src/two_mic_tests/mic1_test" + str(i) + ".npy"
+        audio_reader(filename)
+        
+        filename = "src/ur5_control/src/two_mic_tests/mic2_test" + str(i) + ".npy"
+        audio_reader(filename)
+    
+    #audio_reader("src/ur5_control/src/two_mic_tests/mic1_test1.npy")
+    #audio_reader("src/ur5_control/src/two_mic_tests/mic2_test1.npy")
+    
+    

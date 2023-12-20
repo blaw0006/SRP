@@ -6,6 +6,7 @@ Surface: mats
 Tests 1-5
 - mics 20 cm apart 
 - object dropped from 10 cm 
+- note: in test 4, the can fell over to the left 
 
 Tests 6-10
 - mics 40 cm apart
