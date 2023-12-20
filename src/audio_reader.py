@@ -46,6 +46,10 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     return y
 
 def audio_reader(file):
+    '''
+    Change file input to list of filenames to plot, plot in loop. May still have issue if matplotlib pauses
+    execution while a plot is still running. 
+    '''
     # Load from file
     data = np.load(file)
     figure, axis = plt.subplots()
@@ -71,6 +75,7 @@ def audio_reader(file):
     axis.set_title('Audio Waveform')
     axis.set_xlabel('Time (seconds)')
     axis.set_ylabel('Amplitude')
+    
     plt.show()
     #plt.pause(0.001)
                     
@@ -124,6 +129,6 @@ if __name__ == '__main__':
     print(data[z])
     '''
     #audio_reader("src/ur5_control/src/bruh.npy")
-    #audio_reader("src/ur5_control/src/mic1_test1.npy")
+    audio_reader("src/ur5_control/src/two_mic_tests/mic1_test1.npy")
     
-    audio_reader("src/ur5_control/src/mic2_test1.npy")
+    audio_reader("src/ur5_control/src/two_mic_tests/mic2_test1.npy")
