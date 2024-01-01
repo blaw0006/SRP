@@ -114,6 +114,8 @@ class audio_visualiser:
         print(self.data)
         print(np.shape(self.data))
         #np.save("src/ur5_control/src/bruh.npy", self.data)
+        
+        # save to np file for access later
         np.save(self.file_to_write, self.data)
         
         # stop timing
@@ -125,11 +127,14 @@ if __name__ == '__main__':
     # start timing
     start = time.time()
     
+    # important, used to create or overwrite file for recorded sound
     test = str(input("Enter test number: "))
     
+    # creates a sound file for each mic
     file1 = "src/ur5_control/src/two_mic_tests/mic1_test" + test + ".npy"
     file2 = "src/ur5_control/src/two_mic_tests/mic2_test" + test + ".npy"
     
+    # starts subscriber node for each topic - MUST name the namespaces as t1 and t2 when roslaunching audio_common
     vis1 = audio_visualiser('/t1/audio', file1)    
     vis2 = audio_visualiser('/t2/audio', file2)
 
