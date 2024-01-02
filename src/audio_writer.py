@@ -52,6 +52,7 @@ Ideas for multiple mics
             instance = audio_visualiser(bruh, bruh1)
 - audio_reader just needs another python script that calls the audio_reader functions on the files that have been
 written to - can be hardcoded with filenames 
+    - edit: this can be done in the if name==main block of audio_reader 
 '''
 class audio_visualiser:
     def __init__(self, topic, file_to_write):
@@ -83,6 +84,9 @@ class audio_visualiser:
             frame_rate=16000,
             channels=1
         )
+        
+        # boost the signal by 30db
+        #audio_segment = audio_segment + 30
         
         #audio_segment.export("audio_output.wav", format="wav") # export to wav format 
         

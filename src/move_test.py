@@ -1,12 +1,16 @@
 #! /usr/bin/env python
 '''
 - how to actually activate the robot 
+    turn on the robot
     run the example ROS command (cd /src/pick_demo)) and then run code . to see the space - note that Eric has a difference launch script i can use
     program robot and select the file
+    note: should see the correct starting position for the robot on rviz
     click play
     source workspace
-    rosrun ur5_control move_test
+    rosrun ur5_control move_test.py
 - can manually move the arm to different positions, take note of the arm values and set those as poses in code.
+- then hardcode the movements to these predetermined positions, close gripper on object, move to another position, drop
+- all this while microphones are connected to the table and near gripper to record the sounds
 '''
 import rospy
 import numpy as np

@@ -9,6 +9,7 @@ from io import BytesIO
 from StringIO import StringIO
 from threading import Lock
 from scipy.signal import butter, lfilter
+import math
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
     ''' Helper function that computes filter coefficients for caller 
@@ -52,6 +53,20 @@ def audio_reader(file):
     '''
     # Load from file
     data = np.load(file)
+    
+    # convert to decibels: db = 20*log10(amplitude/reference_amplitude=32767)
+    data = np.divide(data, 32767)    
+    
+    # offset to avoid log(0) errors
+    data = np.add(data, 1e-10)
+    
+    data = np.absolute(data)
+        
+    data = np.log10(data)
+    data = np.multiply(data, 20)
+    
+    #data = np.multiply(20, np.log10(np.divide(data, 32767))) #20*math.log10(data/32767)
+    
     figure, axis = plt.subplots()
     
     print(len(data))
@@ -74,7 +89,7 @@ def audio_reader(file):
     axis.plot(time, data)
     axis.set_title('Audio Waveform')
     axis.set_xlabel('Time (seconds)')
-    axis.set_ylabel('Amplitude')
+    axis.set_ylabel('Decibels')
     
     plt.show()
     #plt.pause(0.001)
