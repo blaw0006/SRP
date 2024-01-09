@@ -83,7 +83,7 @@ def training(model, epochs, X_train, y_train, X_test, y_test):
         if epoch % 10 == 0:
             print(f"Epoch: {epoch} | Loss: {loss:.5f} | Test loss: {test_loss:.5f}")
 
-def audio_reader(file):
+def audio_reader(file, save):
     '''
     Modified audio_reader 
     '''

@@ -46,10 +46,13 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     y = lfilter(b, a, data)
     return y
 
-def audio_reader(file):
+def audio_reader(file, file2, save):
     '''
     Change file input to list of filenames to plot, plot in loop. May still have issue if matplotlib pauses
     execution while a plot is still running. 
+    Inputs
+    - file: filename from which to read 
+    - save: bool that determines whether the filtered files should be saved in a folder
     '''
     # Load from file
     data = np.load(file)
@@ -84,6 +87,14 @@ def audio_reader(file):
     print(time_array)
     print(np.shape(time_array))
     
+    # Save to folder if save == 1
+    if save:
+        np.save(file2, data) # save data to specified filepath
+
+    return time, data
+
+
+def plot(time, data):
     # Plotting and titles
     #axis.plot(time_array, data)
     axis.plot(time, data)
@@ -151,10 +162,12 @@ if __name__ == '__main__':
     
     for i in range(test_start,test_end+1):
         filename = "src/ur5_control/src/two_mic_tests/mic1_test" + str(i) + ".npy"
-        audio_reader(filename)
+        time, data = audio_reader(filename, "NA", 0)
+        plot(time, data)
         
         filename = "src/ur5_control/src/two_mic_tests/mic2_test" + str(i) + ".npy"
-        audio_reader(filename)
+        time, data = audio_reader(filename, "NA", 0)
+        plot(time, data)
     
     #audio_reader("src/ur5_control/src/two_mic_tests/mic1_test1.npy")
     #audio_reader("src/ur5_control/src/two_mic_tests/mic2_test1.npy")
