@@ -61,6 +61,7 @@ def audio_reader(file, file2, save):
     # Load from file
     data = np.load(file)
     
+    '''
     # convert to decibels: db = 20*log10(amplitude/reference_amplitude=32767)
     data = np.divide(data, 32767)    
     
@@ -74,12 +75,11 @@ def audio_reader(file, file2, save):
     
     #data = np.multiply(20, np.log10(np.divide(data, 32767))) #20*math.log10(data/32767)
     
-    figure, axis = plt.subplots()
-    
     print(len(data))
     time = np.arange(0,len(data)).astype(float)/6300 # size of pcm np_array is variable, specify float or it rounds to int
     time_array = np.array([])
     time_array = np.append(time_array, time)
+    
     
     # Apply bandpass filter
     lowcut = 20 # <10Hz is on the floor sounds, 20 seems to be the best 
@@ -87,9 +87,10 @@ def audio_reader(file, file2, save):
     sample_rate = 6300 # approximate, may need to change
     
     data = butter_bandpass_filter(data, lowcut, highcut, sample_rate, order = 5)
-    
-    print(time_array)
-    print(np.shape(time_array))
+    '''
+    #print(time_array)
+    #print(np.shape(time_array))
+    time = np.arange(0,len(data)).astype(float)/6300
     
     # Save to folder if save == 1
     if save:
@@ -100,6 +101,7 @@ def audio_reader(file, file2, save):
 
 def plot(time, data):
     # Plotting and titles
+    figure, axis = plt.subplots()
     #axis.plot(time_array, data)
     axis.plot(time, data)
     axis.set_title('Audio Waveform')

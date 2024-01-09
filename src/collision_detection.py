@@ -24,8 +24,6 @@ output of the convolutional layer after the flattening operation
 probability distribution produced by the output layer.
 
 TODO
-- add folders on pc
-- check that audio_reader still works
 - check over collision_detection code
 - test collision_detection code
 - research best resnet model to use
@@ -109,7 +107,7 @@ def main():
             full_spec_dest = os.path.join(spectra_dest, file)
 
             # Call audio_reader to open file, process, and save in destination
-            time, data = audio_reader(full_source, full_dest, 1)
+            time, data = audio_reader(full_source, full_dest, 1) # save processed data 
 
             # Convert processed data to mel spectrogram and save 
             spectra = feature.melspectrogram(y=data, sr=6300) # sampling rate may be incorrect
