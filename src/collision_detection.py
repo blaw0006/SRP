@@ -5,6 +5,8 @@ from librosa import load, feature
 import torch
 from torch import nn
 import numpy as np
+from audio_reader import audio_reader, plot
+import os
 
 '''
 Convolutional Neural Network training and testing code. 
@@ -21,6 +23,11 @@ output of the convolutional layer after the flattening operation
 - softmax: output convolutional layer that uses softmax activation function to assign class labels to inputs based upon the 
 probability distribution produced by the output layer.
 
+TODO
+- check that audio_reader still works
+- check over collision_detection code
+- test collision_detection code
+- research best resnet model to use
 '''
 # Construct a model
 class collisionDetection(nn.Module):
@@ -83,51 +90,6 @@ def training(model, epochs, X_train, y_train, X_test, y_test):
         if epoch % 10 == 0:
             print(f"Epoch: {epoch} | Loss: {loss:.5f} | Test loss: {test_loss:.5f}")
 
-def audio_reader(file, save):
-    '''
-    Modified audio_reader 
-    '''
-    # Load from file
-    data = np.load(file)
-    
-    # convert to decibels: db = 20*log10(amplitude/reference_amplitude=32767)
-    data = np.divide(data, 32767)    
-    
-    # offset to avoid log(0) errors
-    data = np.add(data, 1e-10)
-    
-    data = np.absolute(data)
-        
-    data = np.log10(data)
-    data = np.multiply(data, 20)
-    
-    #data = np.multiply(20, np.log10(np.divide(data, 32767))) #20*math.log10(data/32767)
-    
-    figure, axis = plt.subplots()
-    
-    print(len(data))
-    time = np.arange(0,len(data)).astype(float)/6300 # size of pcm np_array is variable, specify float or it rounds to int
-    time_array = np.array([])
-    time_array = np.append(time_array, time)
-    
-    # Apply bandpass filter
-    lowcut = 20 # <10Hz is on the floor sounds, 20 seems to be the best 
-    highcut = 190 # >200Hz is over the air sounds. 190 seems to be the lowest it can go without filtering everything
-    sample_rate = 6300 # approximate, may need to change
-    
-    data = butter_bandpass_filter(data, lowcut, highcut, sample_rate, order = 5)
-    
-    print(time_array)
-    print(np.shape(time_array))
-    
-    # Plotting and titles
-    #axis.plot(time_array, data)
-    axis.plot(time, data)
-    axis.set_title('Audio Waveform')
-    axis.set_xlabel('Time (seconds)')
-    axis.set_ylabel('Decibels')
-    
-    plt.show()
 
 def main():
     # Extract time domain audio file 
@@ -135,12 +97,30 @@ def main():
     # functionise the filter and use the code here, filtering is important
     
     # process audio and save in new folder 
+    source = 'src/ur5_control/src/two_mic_tests'
+    dest = 'src/ur5_control/src/processed_two_mic_tests'
+    spectra_dest = 'src/ur5_control/src/spectra'
 
-    filename = 'C:\\Users\\khash\\OneDrive - Monash University\\Documents\\GitHub\\SRP\\src\\two_mic_tests\\mic1_test1.npy'
+    for file in os.listdir(source):
+        if file.endswith('.npy'):  # Ensure it's a numpy file    
+            full_source = os.path.join(source, file)
+            full_dest = os.path.join(dest, file)
+            full_spec_dest = os.path.join(spectra_dest, file)
+
+            # Call audio_reader to open file, process, and save in destination
+            time, data = audio_reader(full_source, full_dest, 1)
+
+            # Convert processed data to mel spectrogram and save 
+            spectra = feature.melspectrogram(y=data, sr=6300) # sampling rate may be incorrect
+            np.save(full_spec_dest, spectra)
+
+
+
+    #filename = 'C:\\Users\\khash\\OneDrive - Monash University\\Documents\\GitHub\\SRP\\src\\two_mic_tests\\mic1_test1.npy'
     # y, sr = load(filename) # calls librosa.load -> y = np.ndarray representing audio time series, sr = sampling rate
-    y = np.load(filename)
-    spectra = feature.melspectrogram(y=y, sr=22050) # convert np array to mel spectrogram
-    print(spectra)
+    # y = np.load(filename)
+    #spectra = feature.melspectrogram(y=y, sr=22050) # convert np array to mel spectrogram
+    #print(spectra)
 
 if __name__ == "__main__":
     # convert the data to tensor form/spectrograms

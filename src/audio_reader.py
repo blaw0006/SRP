@@ -53,6 +53,10 @@ def audio_reader(file, file2, save):
     Inputs
     - file: filename from which to read 
     - save: bool that determines whether the filtered files should be saved in a folder
+
+    Outputs
+    - time: numpy time array (length depends on size of data)
+    - data: numpy array representing the edited soundwave data (over time)
     '''
     # Load from file
     data = np.load(file)
