@@ -24,6 +24,7 @@ output of the convolutional layer after the flattening operation
 probability distribution produced by the output layer.
 
 TODO
+- add folders on pc
 - check that audio_reader still works
 - check over collision_detection code
 - test collision_detection code
