@@ -30,6 +30,7 @@ TODO
 - test collision_detection code
 - view mel spectrogram images to verify them
 - keep in mind that this may not work with weak labelling - may need to adjust or add other layers depending
+- finish writing the training properly with the dataloader iterator (nested for loop)
 '''
 # Construct a model
 class collisionDetection(nn.Module):
@@ -48,35 +49,43 @@ class collisionDetection(nn.Module):
 
 
 # Define training  and testing loop
-def training(model, epochs, X_train, y_train, X_test, y_test):
-    # need to set manual seed?
+def train(model, epochs, train_dataloader, test_dataloader):
+    '''
+    Inputs
+    - model: ResNet18 model
+    - epochs: number of epochs to train for
+    - train_dataloader: dataloader object containing the training data and labels
+    - test_dataloader: dataloader object containing the testing data and labels
+    '''
 
     # define loss function
-    loss_fn = nn.BCEloss() # may need BCEWithLogitsLoss()
+    loss_fn = nn.BCEloss() # may need BCEWithLogitsLoss(). Examples use cross entropy loss
 
     # define optimiser
-    optimiser = torch.optim.Adam(params=model.parameters, # may need to change optimiser
+    optimiser = torch.optim.Adam(params=model.parameters, # may need to change optimiser. Examples use sgd
                                  lr=0.01)
 
     # training loop
     for epoch in epochs:
+        # enter model train mode 
         model.train()
+        
+        for inputs, labels in train_dataloader:
+            # Forward pass
+            y_logits = model(X_train).squeeze()
+            y_pred = torch.round(torch.sigmoid(y_logits))   # Note: May need a different activation function
 
-        # Forward pass
-        y_logits = model(X_train).squeeze()
-        y_pred = torch.round(torch.sigmoid(y_logits))   # Note: May need a different activation function
+            # Calculate loss
+            loss = loss_fn(y_logits, y_train) # Note: may not be able to use raw logits here depending on loss function
 
-        # Calculate loss
-        loss = loss_fn(y_logits, y_train) # Note: may not be able to use raw logits here depending on loss function
+            # Optimiser zero grad
+            optimiser.zero_grad()
 
-        # Optimiser zero grad
-        optimiser.zero_grad()
+            # Backpropagation
+            loss.backward()
 
-        # Backpropagation
-        loss.backward()
-
-        # Optimiser step
-        optimiser.step()
+            # Optimiser step
+            optimiser.step()
 
         ### Testing
         model.eval()
@@ -143,7 +152,7 @@ def main():
     training_data = datasets.ImageFolder(train_dir, transform) # built in dataset which can be passed as input to a DataLoader
     testing_data = datasets.ImageFolder(test_dir, transform)
 
-    # Dataloader provides an iterable over a torchvision dataset
+    # Dataloader provides an iterable over a torchvision dataset. Each 'batch' in a dataloader is a tuple with {data, label}
     train_dataloader = torch.utils.data.Dataloader(training_data, 
                                                    batch_size=2, # adjust batchsize as needed
                                                    shuffle=True, # shuffling data every epoch reduces overfitting
@@ -173,12 +182,8 @@ def main():
     model.fc = nn.Linear(in_features, 2)
     model.to(device)
 
-
-
-
-
-    
-    
+    # Run the training loop
+    # train(model, epochs=100, train_dataloader, testing_dataloader)
 
 
     
