@@ -61,7 +61,7 @@ def audio_reader(file, file2, save):
     # Load from file
     data = np.load(file)
     
-    '''
+    
     # convert to decibels: db = 20*log10(amplitude/reference_amplitude=32767)
     data = np.divide(data, 32767)    
     
@@ -87,7 +87,7 @@ def audio_reader(file, file2, save):
     sample_rate = 6300 # approximate, may need to change
     
     data = butter_bandpass_filter(data, lowcut, highcut, sample_rate, order = 5)
-    '''
+    
     #print(time_array)
     #print(np.shape(time_array))
     time = np.arange(0,len(data)).astype(float)/6300
