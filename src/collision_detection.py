@@ -26,10 +26,11 @@ output of the convolutional layer after the flattening operation
 probability distribution produced by the output layer.
 
 TODO
-- check over collision_detection code
-- test collision_detection code
+- listen to the audio play recordings
+- check that file io stuff and saving processed data works
+- check that transforms work (print shape of tensors before and after)
 - view mel spectrogram images to verify them
-- keep in mind that this may not work with weak labelling - may need to adjust or add other layers depending
+    - keep in mind that this may not work with weak labelling - may need to adjust or add other layers depending
 - finish writing the training properly with the dataloader iterator (nested for loop)
 '''
 # Construct a model
