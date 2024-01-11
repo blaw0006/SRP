@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #import sklearn
 import matplotlib.pyplot as plt
 import librosa
@@ -27,7 +28,12 @@ probability distribution produced by the output layer.
 
 TODO
 - listen to the audio play recordings
+    - system does not recognise headphones as output device, only thing that shows up in settings is dummy output
+    - tried arestore from https://askubuntu.com/questions/132440/headphone-jack-not-working but doesnt work
 - check that file io stuff and saving processed data works
+    - 'not authorised' error - fixed by adding #!/usr/bin/env python to the start of the script
+    - issues with torch and torchvision install - version not compatible with python 2.7. Installed an old version
+    with: pip install torch==1.2.0+cpu torchvision==0.4.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 - check that transforms work (print shape of tensors before and after)
 - view mel spectrogram images to verify them
     - keep in mind that this may not work with weak labelling - may need to adjust or add other layers depending
@@ -58,7 +64,7 @@ def train(model, epochs, train_dataloader, test_dataloader):
     - train_dataloader: dataloader object containing the training data and labels
     - test_dataloader: dataloader object containing the testing data and labels
     '''
-
+    pass
     # define loss function
     loss_fn = nn.BCEloss() # may need BCEWithLogitsLoss(). Examples use cross entropy loss
 
@@ -100,7 +106,8 @@ def train(model, epochs, train_dataloader, test_dataloader):
 
         # Print out what's happening every 10 epochs
         if epoch % 10 == 0:
-            print(f"Epoch: {epoch} | Loss: {loss:.5f} | Test loss: {test_loss:.5f}")
+            # print(f"Epoch: {epoch} | Loss: {loss:.5f} | Test loss: {test_loss:.5f}") requires python 3.6 or later
+            print("Epoch: {} | Loss: {} | Test loss: {}".format(epoch, loss, test_loss))
 
 
 def main():
@@ -110,9 +117,12 @@ def main():
     
     ####### Pre-processing audio ########
     # Process raw audio and save 
-    source = 'src/ur5_control/src/two_mic_tests'
-    dest = 'src/ur5_control/src/processed_two_mic_tests'
-    spectra_dest = 'src/ur5_control/src/spectra'
+    # source = 'src/ur5_control/src/two_mic_tests'
+    source = 'two_mic_tests'
+    # dest = 'src/ur5_control/src/processed_two_mic_tests'
+    dest = 'processed_two_mic_tests'
+    # spectra_dest = 'src/ur5_control/src/spectra'
+    spectra_dest = 'spectra'
 
     for file in os.listdir(source):
         if file.endswith('.npy'):  # Check it's a numpy file (avoid processing readme files)
@@ -122,11 +132,13 @@ def main():
 
             # Call audio_reader to open file, process, and save in destination
             time, data = audio_reader(full_source, full_dest, 1) # save processed data 
-
+            # print(data.shape)
+            
             # Convert processed data to mel spectrogram and save 
-            spectra = feature.melspectrogram(y=data, sr=6300) # NOTE: sampling rate may be incorrect
+            spectra = feature.melspectrogram(y=data, sr=16000) # NOTE: sampling rate may be incorrect (6300)
             np.save(full_spec_dest, spectra)
 
+    '''
     #filename = 'C:\\Users\\khash\\OneDrive - Monash University\\Documents\\GitHub\\SRP\\src\\two_mic_tests\\mic1_test1.npy'
     # y, sr = load(filename) # calls librosa.load -> y = np.ndarray representing audio time series, sr = sampling rate
     # y = np.load(filename)
@@ -185,7 +197,7 @@ def main():
 
     # Run the training loop
     # train(model, epochs=100, train_dataloader, testing_dataloader)
-
+    '''
 
     
 

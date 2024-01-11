@@ -126,7 +126,92 @@ class audio_visualiser:
         end = time.time()
         print(end - start)
         
+
+class audio_saver():
+    def __init__(self, topic, file_to_write):
+        rospy.init_node('audio_handler', anonymous=True) # avoid duplicate node names with anonymous=True
+        rospy.Subscriber(topic, inputMsg, self.audio_callback)
+        #self.audio_data = None
+        self.pcm = None 
+        self.data = AudioSegment.silent(duration=0) # empty audiosegment that will be appended to each callback
+        '''
+        self.data = np.array([]) # initialise empty np array
+        '''
+        #self.count = np.array(0) # counter to be used as key for np.savez input
+        self.count = 0
+        self.file_to_write = file_to_write
+        self.lock = Lock() # create threadlock for thread synchronisation
+        
+        
+    def audio_callback(self, data):
+        '''
+        Callback function converts raw mp3 -> AudioSegment -> wav -> np_array
+        
+        AudioSegment accepts either file path to mp3 file or raw mp3 data (in the form of bytestrings) as input
+        Since data.data accesses the raw audio data as a bytestring, no further processing is needed to convert
+        it to a bytestring (np.array(input) and np_array.tobytes() do not have to be used).
+        '''
+        audio_samples = data.data # need the .data field to access the mp3 data (hexadecimal bytestring of the form '\xff\xf3\xb8\xc4\r}d\x15\xd8')
+        
+        
+        # create AudioSegment object from the raw mp3 data
+        audio_segment = AudioSegment(
+            audio_samples,  
+            sample_width=2, # sample width is number of bytes used to represent one element-> S16LE means 16 bit byte width
+            frame_rate=16000,
+            channels=1
+        )
+        '''
+        # boost the signal by 30db
+        #audio_segment = audio_segment + 30
+        
+        #audio_segment.export("audio_output.wav", format="wav") # export to wav format 
+        
+        # hidden instance variable containing raw wav data after conversion 
+        wav_data = audio_segment._data
+        
+        # convert wav to np_array for plotting
+        self.pcm = np.frombuffer(wav_data, dtype=np.int16) 
+        #print(self.pcm)
+        
+        # write numpy data to file (as binary np, can be loaded to np arrays later)
+        # np.savez("filepath", np_array, key)
+        #np.savez("src/ur5_control/src/bruh.npz", self.pcm, self.count)
+        #np.savez("src/ur5_control/src/bruh.npz", **{str(int(self.count)): self.pcm})
+        #key = f'array_{self.count}'
+        
+        
+        
+        #key = 'array_{}'.format(self.count)
+        #np.savez("src/ur5_control/src/bruh.npz", **{key: self.pcm})
+        self.data = np.append(self.data, self.pcm)
+        '''
+        self.data = self.data + audio_segment # append the new data to self.data
+        self.count += 1
+        
+        
+        # Call visualise method for plotting
+        #self.visualise_audio()
+        
+       
     
+    def shutdown_callback(self):
+        #print(self.data)
+        #print(np.shape(self.data))
+        #np.save("src/ur5_control/src/bruh.npy", self.data)
+        
+        # save to np file for access later
+        '''
+        np.save(self.file_to_write, self.data)
+        '''
+
+        # save audiosegment data as an mp3 file
+        self.data.export(self.file_to_write, format="mp3")
+        
+        # stop timing
+        end = time.time()
+        print(end - start)
+        
 if __name__ == '__main__':
     # start timing
     start = time.time()
@@ -135,8 +220,14 @@ if __name__ == '__main__':
     test = str(input("Enter test number: "))
     
     # creates a sound file for each mic
+    '''
+    file1 = "src/ur5_control/src/two_mic_tests/mic1_test" + test + ".mp3"
+    file2 = "src/ur5_control/src/two_mic_tests/mic2_test" + test + ".mp3"
+    '''
+    
     file1 = "src/ur5_control/src/two_mic_tests/mic1_test" + test + ".npy"
     file2 = "src/ur5_control/src/two_mic_tests/mic2_test" + test + ".npy"
+    
     
     # starts subscriber node for each topic - MUST name the namespaces as t1 and t2 when roslaunching audio_common
     vis1 = audio_visualiser('/t1/audio', file1)    
