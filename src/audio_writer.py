@@ -213,6 +213,8 @@ class audio_saver():
         print(end - start)
         
 if __name__ == '__main__':
+    visualise = 0 # visualise = 0 --> run audio_saver
+    
     # start timing
     start = time.time()
     
@@ -220,18 +222,24 @@ if __name__ == '__main__':
     test = str(input("Enter test number: "))
     
     # creates a sound file for each mic
-    '''
-    file1 = "src/ur5_control/src/two_mic_tests/mic1_test" + test + ".mp3"
-    file2 = "src/ur5_control/src/two_mic_tests/mic2_test" + test + ".mp3"
-    '''
-    
     file1 = "src/ur5_control/src/two_mic_tests/mic1_test" + test + ".npy"
     file2 = "src/ur5_control/src/two_mic_tests/mic2_test" + test + ".npy"
     
     
+    file3 = "src/ur5_control/src/two_mic_tests/mic1_test" + test + ".mp3"
+    file4 = "src/ur5_control/src/two_mic_tests/mic2_test" + test + ".mp3"
+    
+    
     # starts subscriber node for each topic - MUST name the namespaces as t1 and t2 when roslaunching audio_common
-    vis1 = audio_visualiser('/t1/audio', file1)    
-    vis2 = audio_visualiser('/t2/audio', file2)
+    
+    # choose if audio_visualiser or audio_saver is used
+    if visualise:
+        vis1 = audio_visualiser('/t1/audio', file1)    
+        vis2 = audio_visualiser('/t2/audio', file2)
+    
+    else:
+        vis1 = audio_saver('/t1/audio', file3)
+        vis2 = audio_saver('/t2/audio', file4)
 
     # vis.visualise_audio() # calls the visualise method explicitly + separately from the callback. Calling 
     # within the callback makes more sense here since the visualisation is tied to the data being processed in callback
@@ -240,6 +248,7 @@ if __name__ == '__main__':
     # save appended data arrays after shutdown
     rospy.on_shutdown(vis1.shutdown_callback)
     rospy.on_shutdown(vis2.shutdown_callback)
+    
     
     # keeps the node running until interrupted (ctrl-c)
     rospy.spin()
