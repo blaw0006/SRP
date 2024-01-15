@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#! /usr/bin/env python
 import rospy
 import numpy as np
 import matplotlib.pyplot as plt
@@ -6,8 +6,8 @@ import roslib; roslib.load_manifest('robotiq_2f_gripper_control')
 from pydub import AudioSegment
 from audio_common_msgs.msg import AudioData as inputMsg
 from io import BytesIO
-#from StringIO import StringIO # NOTE: this only works with python2
-from io import StringIO # correct import for python3
+from StringIO import StringIO # NOTE: this only works with python2
+#from io import StringIO # correct import for python3
 from threading import Lock
 from scipy.signal import butter, lfilter
 import math
