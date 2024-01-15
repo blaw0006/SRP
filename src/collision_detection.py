@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #import sklearn
 import matplotlib.pyplot as plt
 import librosa
@@ -10,6 +10,7 @@ from torchvision import datasets, models, transforms
 import numpy as np
 from audio_reader import audio_reader, plot
 import os
+import sys
 
 '''
 Convolutional Neural Network training and testing code. 
@@ -116,7 +117,7 @@ def main():
     # functionise the filter and use the code here, filtering is important
     
     ####### Pre-processing audio ########
-    # Process raw audio and save 
+    # Process raw audio (bandpass + convert to db) and save 
     # source = 'src/ur5_control/src/two_mic_tests'
     source = 'two_mic_tests'
     # dest = 'src/ur5_control/src/processed_two_mic_tests'
@@ -136,7 +137,7 @@ def main():
             
             # Convert processed data to mel spectrogram and save 
             spectra = feature.melspectrogram(y=data, sr=16000) # NOTE: sampling rate may be incorrect (6300)
-            np.save(full_spec_dest, spectra)
+            np.save(full_spec_dest, spectra) # spectrogram is an np array
 
     '''
     #filename = 'C:\\Users\\khash\\OneDrive - Monash University\\Documents\\GitHub\\SRP\\src\\two_mic_tests\\mic1_test1.npy'
@@ -202,5 +203,6 @@ def main():
     
 
 if __name__ == "__main__":
+    sys.path.insert(0, "/home/caitlin/blaw_ws/src")
     # convert the data to tensor form/spectrograms
     main()

@@ -126,8 +126,104 @@ class audio_visualiser:
         end = time.time()
         print(end - start)
         
+# -----------------------------------------
+class audio_visualiserV2():
+    ''' Alternate version of audio_visualiser that accumulates data as audiosegments then uses the 
+    actual pydub conversion function to convert to wav + frombuffer to convert to np, rather than
+    using hidden methods to convert to wav as in audio_visualiser
+    '''
+    def __init__(self, topic, np_file_to_write, wav_file_to_write):
+        rospy.init_node('audio_handler', anonymous=True) # avoid duplicate node names with anonymous=True
+        rospy.Subscriber(topic, inputMsg, self.audio_callback)
+        #self.audio_data = None
+        self.data = AudioSegment.silent(duration=0) # empty audiosegment that will be appended to each callback
+        '''
+        self.data = np.array([]) # initialise empty np array
+        '''
+        self.wav_file_to_write = wav_file_to_write
+        self.np_file_to_write = np_file_to_write
+        self.lock = Lock() # create threadlock for thread synchronisation
+        
+        
+    def audio_callback(self, data):
+        '''
+        Callback function converts raw mp3 -> AudioSegment -> wav -> np_array
+        
+        AudioSegment accepts either file path to mp3 file or raw mp3 data (in the form of bytestrings) as input
+        Since data.data accesses the raw audio data as a bytestring, no further processing is needed to convert
+        it to a bytestring (np.array(input) and np_array.tobytes() do not have to be used).
+        '''
+        audio_samples = data.data # need the .data field to access the mp3 data (hexadecimal bytestring of the form '\xff\xf3\xb8\xc4\r}d\x15\xd8')
+        
+        
+        # create AudioSegment object from the raw mp3 data
+        audio_segment = AudioSegment(
+            audio_samples,  
+            sample_width=2, # sample width is number of bytes used to represent one element-> S16LE means 16 bit byte width
+            frame_rate=16000,
+            channels=1
+        )
+        '''
+        # boost the signal by 30db
+        #audio_segment = audio_segment + 30
+        
+        #audio_segment.export("audio_output.wav", format="wav") # export to wav format 
+        
+        # hidden instance variable containing raw wav data after conversion 
+        wav_data = audio_segment._data
+        
+        # convert wav to np_array for plotting
+        self.pcm = np.frombuffer(wav_data, dtype=np.int16) 
+        #print(self.pcm)
+        
+        # write numpy data to file (as binary np, can be loaded to np arrays later)
+        # np.savez("filepath", np_array, key)
+        #np.savez("src/ur5_control/src/bruh.npz", self.pcm, self.count)
+        #np.savez("src/ur5_control/src/bruh.npz", **{str(int(self.count)): self.pcm})
+        #key = f'array_{self.count}'
+        
+        
+        
+        #key = 'array_{}'.format(self.count)
+        #np.savez("src/ur5_control/src/bruh.npz", **{key: self.pcm})
+        self.data = np.append(self.data, self.pcm)
+        '''
+        self.data = self.data + audio_segment # append the new data to self.data
+        self.count += 1
+        
+        
+        # Call visualise method for plotting
+        #self.visualise_audio()
+        
+       
+    
+    def shutdown_callback(self):
+        
+        # save to np file for access later
+        '''
+        np.save(self.file_to_write, self.data)
+        '''
+        # convert audiosegment to wav and export
+        audio_segment.export(self.wav_file_to_write, format="wav") # save wav file first
 
+        # convert wav file to numpy
+        wav_file = audio_segment.from_wav(wav_file_to_write)
+        np_array = np.frombuffer(wav_file, dtype=np.int16) 
+        
+
+
+        # save audiosegment data as np array
+        np.save(self.np_file_to_write, np_array)
+        
+        # stop timing
+        end = time.time()
+        print(end - start)
+
+# ------------------------------------------------------------------
 class audio_saver():
+    ''' Alternate version of audio_visualiser that exports and saves the recordings as mp3 files
+    (to the same location), rather than npy files.
+    '''
     def __init__(self, topic, file_to_write):
         rospy.init_node('audio_handler', anonymous=True) # avoid duplicate node names with anonymous=True
         rospy.Subscriber(topic, inputMsg, self.audio_callback)
@@ -213,7 +309,8 @@ class audio_saver():
         print(end - start)
         
 if __name__ == '__main__':
-    visualise = 0 # visualise = 0 --> run audio_saver
+    print("Select function: 2-audio_visualiser, 1-audio_visualiserV2, 0-audio_saver")
+    visualise = int(input("Enter function number: ")) # visualise = 0 --> run audio_saver
     
     # start timing
     start = time.time()
@@ -222,24 +319,31 @@ if __name__ == '__main__':
     test = str(input("Enter test number: "))
     
     # creates a sound file for each mic
+    # visualiser 1 files
     file1 = "src/ur5_control/src/two_mic_tests/mic1_test" + test + ".npy"
     file2 = "src/ur5_control/src/two_mic_tests/mic2_test" + test + ".npy"
+
+    # visualiser 2 files (wav and np)
+    file3 = "src/ur5_control/src/two_mic_tests/mic1_test" + test + ".wav"
+    file4 = "src/ur5_control/src/two_mic_tests/mic2_test" + test + ".wav"
     
-    
-    file3 = "src/ur5_control/src/two_mic_tests/mic1_test" + test + ".mp3"
-    file4 = "src/ur5_control/src/two_mic_tests/mic2_test" + test + ".mp3"
+    # audio saver (mp3) files 
+    file5 = "src/ur5_control/src/two_mic_tests/mic1_test" + test + ".mp3"
+    file6 = "src/ur5_control/src/two_mic_tests/mic2_test" + test + ".mp3"
     
     
     # starts subscriber node for each topic - MUST name the namespaces as t1 and t2 when roslaunching audio_common
     
     # choose if audio_visualiser or audio_saver is used
-    if visualise:
+    if visualise == 2: # original visualiser function
         vis1 = audio_visualiser('/t1/audio', file1)    
         vis2 = audio_visualiser('/t2/audio', file2)
-    
-    else:
-        vis1 = audio_saver('/t1/audio', file3)
-        vis2 = audio_saver('/t2/audio', file4)
+    else if visualise == 1: # visualiser v2 function
+        vis1 = audio_visualiserV2('/t1/audio', file1, file3)
+        vis2 = audio_visualiserV2('/t2/audio', file2, file4)
+    else:  # audio saver function
+        vis1 = audio_saver('/t1/audio', file5)
+        vis2 = audio_saver('/t2/audio', file6)
 
     # vis.visualise_audio() # calls the visualise method explicitly + separately from the callback. Calling 
     # within the callback makes more sense here since the visualisation is tied to the data being processed in callback
