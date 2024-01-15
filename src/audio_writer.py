@@ -204,10 +204,10 @@ class audio_visualiserV2():
         np.save(self.file_to_write, self.data)
         '''
         # convert audiosegment to wav and export
-        audio_segment.export(self.wav_file_to_write, format="wav") # save wav file first
+        AudioSegment.export(self.wav_file_to_write, format="wav") # save wav file first
 
         # convert wav file to numpy
-        wav_file = audio_segment.from_wav(wav_file_to_write)
+        wav_file = AudioSegment.from_wav(self.wav_file_to_write)
         np_array = np.frombuffer(wav_file, dtype=np.int16) 
         
 
@@ -338,7 +338,7 @@ if __name__ == '__main__':
     if visualise == 2: # original visualiser function
         vis1 = audio_visualiser('/t1/audio', file1)    
         vis2 = audio_visualiser('/t2/audio', file2)
-    else if visualise == 1: # visualiser v2 function
+    elif visualise == 1: # visualiser v2 function
         vis1 = audio_visualiserV2('/t1/audio', file1, file3)
         vis2 = audio_visualiserV2('/t2/audio', file2, file4)
     else:  # audio saver function
