@@ -62,6 +62,43 @@ plt functions
 of the threads is holding onto the lock and preventing other threads from using it
     - regardless, expect issues since even if the lock worked, the threads would queue up to edit the plot, 
     which would lead to delays between sounds heard and seen on soundwave
+
+
+
+
+TRAINING THE MODEL
+########## Done so far ##############
+Paths have been fixed by having /home at the start instead of ~/caitlin
+Spectrograms have been converted to png to allow for use of their png-to-hdf5 functions.
+Changed the DATASET_DIR to pngs instead of spectra
+Changed workspace to panns_transfer_to_gtzan
+Removed the "freeze_base" argument in line 77 main.py since cnn14_16k doesnt take that argument
+Realised that cnn14_16k cannot be used since the sample rate is not 16000... spectrogram must match the input sizes of the chosen model - need to choose a model then alter the spectrogram parameters to match that model
+
+########## Current bugs #############
+KEYERROR mic1_test1
+- check the keyerror - does the script need to account for the .png extension
+    - no, it get rids of it by splitting the name
+- line 61 in features.py is giving the error, for some reason the name it is looking for is not in the dictionary. Print stuff to check if the dictionary was made correctly?
+- turns out the issue was an unmodified config file - they still had the music labels
+- fixed this by adding label number (0 for no collision, 1 for collision) to the start of filenames
+main.py unrecognised arguments + changing the target dictionary key to simply take the first letter
+of the filename, which is the label number
+
+copied models.py and main.py from audiosset_tagging_cnn - runme now calls models_new/main_new
+- CANNOT run main_new in panns_transfer since it relies on many other scripts in audioset_tagging
+- best I can try is running main.py with models_new.py and modifying main.py so it works
+
+
+cnn14_16k has no attribute load_from_pretrained
+- need to design own class similar to transfer_cnn14, which loads a cnn14_16k model and adds 
+a softmax layer to the end - it is in MODELS_NEW
+    - note: right now it uses cpu, if want to use gpu need to change under transfer_cnn14_16k
+
+
+
+
+
 '''
 class audio_visualiser:
     def __init__(self):

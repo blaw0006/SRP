@@ -131,7 +131,7 @@ def main():
             full_dest = os.path.join(dest, file)
             full_spec_dest = os.path.join(spectra_dest, file)
 
-            # Call audio_reader to open file, process, and save in destination
+            # Call audio_reader to open raw numpy file, process, and save in destination as numpy
             time, data = audio_reader(full_source, full_dest, 1) # save processed data 
             # print(data.shape)
             
@@ -206,3 +206,7 @@ if __name__ == "__main__":
     sys.path.insert(0, "/home/caitlin/blaw_ws/src")
     # convert the data to tensor form/spectrograms
     main()
+
+    # Modify and use the runme.sh file to train it on the data 
+    # find the filepath of the saved model and load it in the code
+    # use it to make predictions on the test data
