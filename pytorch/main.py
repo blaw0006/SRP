@@ -19,6 +19,12 @@ from pytorch_utils import move_data_to_device, do_mixup
 from utilities import (create_folder, get_filename, create_logging, StatisticsContainer, Mixup)
 from data_generator import GtzanDataset, TrainSampler, EvaluateSampler, collate_fn
 from models import Transfer_Cnn14
+from models_new import (Cnn14, Cnn14_no_specaug, Cnn14_no_dropout, 
+    Cnn6, Cnn10, ResNet22, ResNet38, ResNet54, Cnn14_emb512, Cnn14_emb128, 
+    Cnn14_emb32, MobileNetV1, MobileNetV2, LeeNet11, LeeNet24, DaiNet19, 
+    Res1dNet31, Res1dNet51, Wavegram_Cnn14, Wavegram_Logmel_Cnn14, 
+    Wavegram_Logmel128_Cnn14, Cnn14_16k, Cnn14_8k, Cnn14_mel32, Cnn14_mel128, 
+    Cnn14_mixup_time_domain, Cnn14_DecisionLevelMax, Cnn14_DecisionLevelAtt, Transfer_Cnn14_16k) # NOTE: added this so the new model can be loaded
 from evaluate import Evaluator
 
 
@@ -39,7 +45,7 @@ def train(args):
     stop_iteration = args.stop_iteration
     device = 'cuda' if (args.cuda and torch.cuda.is_available()) else 'cpu'
     filename = args.filename
-    num_workers = 8
+    num_workers = 1
 
     loss_func = get_loss_func(loss_type)
     pretrain = True if pretrained_checkpoint_path else False
@@ -75,6 +81,7 @@ def train(args):
     Model = eval(model_type)
     model = Model(sample_rate, window_size, hop_size, mel_bins, fmin, fmax, 
         classes_num, freeze_base)
+    #model = Model(16000, window_size, hop_size, mel_bins, fmin, fmax, classes_num)
 
     # Statistics
     statistics_container = StatisticsContainer(statistics_path)
@@ -137,7 +144,8 @@ def train(args):
     
     # Train on mini batches
     for batch_data_dict in train_loader:
-
+        print(iteration)
+        
         # import crash
         # asdf
         
@@ -168,6 +176,7 @@ def train(args):
 
         # Save model 
         if iteration % 2000 == 0 and iteration > 0:
+            print('saving model')
             checkpoint = {
                 'iteration': iteration, 
                 'model': model.module.state_dict()}
@@ -177,6 +186,8 @@ def train(args):
                 
             torch.save(checkpoint, checkpoint_path)
             logging.info('Model saved to {}'.format(checkpoint_path))
+            print('saving model')
+
         
         if 'mixup' in augmentation:
             batch_data_dict['mixup_lambda'] = mixup_augmenter.get_lambda(len(batch_data_dict['waveform']))
@@ -212,8 +223,10 @@ def train(args):
         loss.backward()
         optimizer.step()
 
+        print(iteration)
         # Stop learning
         if iteration == stop_iteration:
+            print('break')
             break 
 
         iteration += 1

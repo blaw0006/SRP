@@ -38,12 +38,13 @@ def pack_audio_files_to_hdf5(args):
     sample_rate = config.sample_rate
     clip_samples = config.clip_samples
     classes_num = config.classes_num
-    lb_to_idx = config.lb_to_idx
+    lb_to_idx = config.lb_to_idx # contains the label names 
 
     # Paths
-    audios_dir = os.path.join(dataset_dir)
+    audios_dir = os.path.join(dataset_dir) # "/home/caitlin/blaw_ws/src/ur5_control/src/SRP/src/pngs"
 
     if mini_data:
+        # destination directory for the converted hdf5 files later
         packed_hdf5_path = os.path.join(workspace, 'features', 'minidata_waveform.h5')
     else:
         packed_hdf5_path = os.path.join(workspace, 'features', 'waveform.h5')
@@ -51,13 +52,30 @@ def pack_audio_files_to_hdf5(args):
 
     (audio_names, audio_paths) = traverse_folder(audios_dir)
     
-    audio_names = sorted(audio_names)
-    audio_paths = sorted(audio_paths)
+    audio_names = sorted(audio_names) # contains names of spectra including .png
+    audio_paths = sorted(audio_paths) # contains path to spectra (within the label folders)
 
+    # check the audio names in the directory
+    # for i in audio_names:
+    #     print(i)
+    #     print(i.split('.')[0]) # this just splits the extension from the filename
+
+    # for i in audio_paths:
+    #     print(i)
+    
+    # # check the keys in lb_to_idx
+    # print("Keys in lb_to_idx:", list(lb_to_idx.keys()))
+    # print(np.array([lb_to_idx[audio_name.split('.')[0]] for audio_name in audio_names]))
+
+
+    # creates a dictionary with 4 key-value pairs 
     meta_dict = {
         'audio_name': np.array(audio_names), 
         'audio_path': np.array(audio_paths), 
-        'target': np.array([lb_to_idx[audio_name.split('.')[0]] for audio_name in audio_names]), 
+
+        # target is meant to be an index corresponding to the label of that spectrogram image
+        #'target': np.array([lb_to_idx[audio_name.split('.')[0]] for audio_name in audio_names]), 
+        'target': np.array([int(audio_name[0]) for audio_name in audio_names]),
         'fold': np.arange(len(audio_names)) % 10 + 1}
     
     if mini_data:
@@ -97,7 +115,8 @@ def pack_audio_files_to_hdf5(args):
             audio_name = meta_dict['audio_name'][n]
             fold = meta_dict['fold'][n]
             audio_path = meta_dict['audio_path'][n]
-            (audio, fs) = librosa.core.load(audio_path, sr=sample_rate, mono=True)
+            #(audio, fs) = librosa.core.load(audio_path, sr=sample_rate, mono=True)
+            (audio, fs) = librosa.load(audio_path, sr=sample_rate, mono=True)
 
             audio = pad_truncate_sequence(audio, clip_samples)
 
