@@ -1,16 +1,19 @@
 #!/usr/bin/bash
-#DATASET_DIR="blaw_ws/src/ur5_control/src/SRP/src/pngs"
-DATASET_DIR="/home/caitlin/blaw_ws/src/ur5_control/src/SRP/src/wav_files" # assumes that the directory is setup with the labels (contains a 'collision' and 'no collision' folder)
-WORKSPACE="/home/caitlin/blaw_ws/src/panns_transfer_to_gtzan"
-#WORKSPACE="blaw_ws/src/panns_transfer_to_gtzan"
+#DATASET_DIR="/home/caitlin/blaw_ws/src/ur5_control/src/SRP/src/wav_files" # assumes that the directory is setup with the labels (contains a 'collision' and 'no collision' folder)
+DATASET_DIR="/home/acrv/blaw_ws/src/ur5_control/src/SRP/src/wav_files"
+#WORKSPACE="/home/caitlin/blaw_ws/src/panns_transfer_to_gtzan"
+WORKSPACE="/home/acrv/blaw_ws/src/ur5_control/src/SRP/panns_transfer_to_gtzan"
+
 
 python3 ../panns_transfer_to_gtzan/utils/features.py pack_audio_files_to_hdf5 --dataset_dir=$DATASET_DIR --workspace=$WORKSPACE 
 
 
-PRETRAINED_CHECKPOINT_PATH="/home/caitlin/blaw_ws/src/panns_transfer_to_gtzan/workspace/Cnn14_16k_mAP=0.438.pth"
+#PRETRAINED_CHECKPOINT_PATH="/home/caitlin/blaw_ws/src/panns_transfer_to_gtzan/workspace/Cnn14_16k_mAP=0.438.pth"
+PRETRAINED_CHECKPOINT_PATH="/home/acrv/blaw_ws/src/ur5_control/src/SRP/panns_transfer_to_gtzan/workspace/Cnn14_16k_mAP=0.438.pth"
+
 
 #CUDA_VISIBLE_DEVICES=3 python3 pytorch/main.py train --dataset_dir=$DATASET_DIR --workspace=$WORKSPACE --holdout_fold=1 --model_type="Transfer_Cnn14" --pretrained_checkpoint_path=$PRETRAINED_CHECKPOINT_PATH --loss_type=clip_nll --augmentation='mixup' --learning_rate=1e-4 --batch_size=32 --resume_iteration=0 --stop_iteration=10000 --cuda
-python3 pytorch/main.py train --dataset_dir=$DATASET_DIR --workspace=$WORKSPACE --holdout_fold=1 --model_type="Transfer_Cnn14_16k" --pretrained_checkpoint_path=$PRETRAINED_CHECKPOINT_PATH --loss_type=clip_nll --augmentation='mixup' --learning_rate=1e-4 --batch_size=2 --resume_iteration=0 --stop_iteration=10000
+python3 pytorch/main.py train --dataset_dir=$DATASET_DIR --workspace=$WORKSPACE --holdout_fold=1 --model_type="Transfer_Cnn14_16k" --pretrained_checkpoint_path=$PRETRAINED_CHECKPOINT_PATH --loss_type=clip_nll --augmentation='mixup' --learning_rate=1e-4 --batch_size=2 --resume_iteration=0 --stop_iteration=10000 --cuda
 
 
 #####
