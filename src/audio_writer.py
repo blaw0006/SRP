@@ -219,7 +219,7 @@ class audio_visualiserV2():
         print(end - start)
 
 # ------------------------------------------------------------------
-class audio_saver():
+class record_mp3():
     ''' Alternate version of audio_visualiser that exports and saves the recordings as mp3 files
     (to the same location), rather than npy files.
     '''
@@ -308,8 +308,8 @@ class audio_saver():
         print(end - start)
         
 if __name__ == '__main__':
-    print("Select function: 2-audio_visualiser, 1-audio_visualiserV2, 0-audio_saver")
-    visualise = int(input("Enter function number: ")) # visualise = 0 --> run audio_saver
+    print("Select function: 2-audio_visualiser, 1-audio_visualiserV2, 0-record_mp3")
+    visualise = int(input("Enter function number: ")) # visualise = 0 --> run record_mp3
     
     # start timing
     start = time.time()
@@ -326,23 +326,23 @@ if __name__ == '__main__':
     file3 = "src/ur5_control/src/two_mic_tests/mic1_test" + test + ".wav"
     file4 = "src/ur5_control/src/two_mic_tests/mic2_test" + test + ".wav"
     
-    # audio saver (mp3) files 
-    file5 = "src/ur5_control/src/two_mic_tests/mic1_test" + test + ".mp3"
-    file6 = "src/ur5_control/src/two_mic_tests/mic2_test" + test + ".mp3"
+    # record_mp3 files - currently set to no collision !!!!
+    file5 = "/home/acrv/blaw_ws/src/ur5_control/src/SRP/src/mp3_test/no_collision/0mic1_test" + test + ".mp3"
+    file6 = "/home/acrv/blaw_ws/src/ur5_control/src/SRP/src/mp3_test/no_collision/0mic2_test" + test + ".mp3"
     
     
     # starts subscriber node for each topic - MUST name the namespaces as t1 and t2 when roslaunching audio_common
     
-    # choose if audio_visualiser or audio_saver is used
+    # choose if audio_visualiser or record_mp3 is used
     if visualise == 2: # original visualiser function
         vis1 = audio_visualiser('/t1/audio', file1)    
         vis2 = audio_visualiser('/t2/audio', file2)
     elif visualise == 1: # visualiser v2 function
         vis1 = audio_visualiserV2('/t1/audio', file1, file3)
         vis2 = audio_visualiserV2('/t2/audio', file2, file4)
-    else:  # audio saver function
-        vis1 = audio_saver('/t1/audio', file5)
-        vis2 = audio_saver('/t2/audio', file6)
+    else:  # record mp3 function
+        vis1 = record_mp3('/t1/audio', file5)
+        vis2 = record_mp3('/t2/audio', file6)
 
     # vis.visualise_audio() # calls the visualise method explicitly + separately from the callback. Calling 
     # within the callback makes more sense here since the visualisation is tied to the data being processed in callback

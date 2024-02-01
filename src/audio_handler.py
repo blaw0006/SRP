@@ -102,15 +102,19 @@ TODO
 - figure out how the training is happening and if the model is converging or not/how to tell if it is converging
     - loss is being printed every iteration
     - seems to print validation score every 200 epochs - need to test this with proper dataset, since current one is giving val = 0.5 (as it should)
-- can you still run bandpass filters on a wav/mp3 file? Otherwise all my filtering is worthless
-- is the sampling rate correct given the mp3 -> wav conversion? Does the model work with raw mp3? If i use mp3 can i still run filters? Is it converting to mel spectrogram input? How tf does it work?
+- can you still run bandpass filters on a wav/mp3 file? 
+    - no, scipy bandpass filters only work with npy
+    - either convert files to numpy -> filter -> back to wav for input to model, or just give raw unfiltered mp3 - could test which is better
+- is the sampling rate correct given the mp3 -> wav conversion? Does the model work with raw mp3? 
     - model works with mp3 inputs
 - loss function choice: clip nll
 - optimiser: Adam
 
-can you run filters on wav/mp3? Does their code convert to mel spectrogram? how does it work?
-change workspace so that 300mb models arent saved to the repo. I only want them locally.
-
+Issue: to apply filters, you need to convert wav/mp3 to numpy. The conversion back does not seem to be simple, so need to work out how to do that.
+In meantime, could record some raw wav and run it through the model to see if it can converge.
+Record small no_collision dataset
+Run the model on that and see if it converges at all
+also need to clean up the audio_writer - split the classes into a record_wav, record_np, record_mp3 files
 
 
 '''
