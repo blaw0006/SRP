@@ -4,8 +4,8 @@
 DATASET_DIR="/home/acrv/blaw_ws/src/ur5_control/src/SRP/src/mp3_test"
 
 #WORKSPACE="/home/caitlin/blaw_ws/src/panns_transfer_to_gtzan"
-WORKSPACE="/home/acrv/blaw_ws/src/ur5_control/src/SRP/panns_transfer_to_gtzan"
-
+#WORKSPACE="/home/acrv/blaw_ws/src/ur5_control/src/SRP/panns_transfer_to_gtzan"
+WORKSPACE="/home/acrv/blaw_ws/src/workspace" # store checkpoints and logs outside git repo since they are very large
 
 python3 ../panns_transfer_to_gtzan/utils/features.py pack_audio_files_to_hdf5 --dataset_dir=$DATASET_DIR --workspace=$WORKSPACE 
 

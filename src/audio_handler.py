@@ -109,6 +109,7 @@ TODO
 - optimiser: Adam
 
 can you run filters on wav/mp3? Does their code convert to mel spectrogram? how does it work?
+change workspace so that 300mb models arent saved to the repo. I only want them locally.
 
 
 
