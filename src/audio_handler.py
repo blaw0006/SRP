@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 import rospy
 import numpy as np
 import matplotlib.pyplot as plt
@@ -96,7 +96,7 @@ a softmax layer to the end - it is in MODELS_NEW
     - note: right now it uses cpu, if want to use gpu need to change under transfer_cnn14_16k
 
 
-TODO
+Training
 - runme, main and transfer_cnn are all set to use cuda and gpu
     - UPDATE: confirmed gpu is being used
 - figure out how the training is happening and if the model is converging or not/how to tell if it is converging
@@ -111,10 +111,11 @@ TODO
 - optimiser: Adam
 
 Issue: to apply filters, you need to convert wav/mp3 to numpy. The conversion back does not seem to be simple, so need to work out how to do that.
-In meantime, could record some raw wav and run it through the model to see if it can converge.
-Record small no_collision dataset
-Run the model on that and see if it converges at all
-also need to clean up the audio_writer - split the classes into a record_wav, record_np, record_mp3 files
+No guarantee that filtered data is better, so try with raw data first. 
+
+TODO
+- need to clean up the audio_writer - split the classes into a record_wav, record_np, record_mp3 files. Clean up and streamline the recording process
+- test record a few times. 
 
 
 '''
