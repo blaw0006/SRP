@@ -2642,7 +2642,7 @@ class Transfer_Cnn14_16k(nn.Module):
         """Classifier for a new task using pretrained Cnn14_16k as a sub module.
         """
         super(Transfer_Cnn14_16k, self).__init__()
-        audioset_classes_num = 527 # only 2 output classes
+        audioset_classes_num = 527 
         
         self.base = Cnn14_16k(sample_rate, window_size, hop_size, mel_bins, fmin, 
             fmax, audioset_classes_num)
@@ -2661,8 +2661,8 @@ class Transfer_Cnn14_16k(nn.Module):
         init_layer(self.fc_transfer)
 
     def load_from_pretrain(self, pretrained_checkpoint_path):
-        #checkpoint = torch.load(pretrained_checkpoint_path)
-        checkpoint = torch.load(pretrained_checkpoint_path, map_location=torch.device('cpu'))
+        checkpoint = torch.load(pretrained_checkpoint_path)
+        #checkpoint = torch.load(pretrained_checkpoint_path, map_location=torch.device('cpu'))
         self.base.load_state_dict(checkpoint['model'])
 
     def forward(self, input, mixup_lambda=None):

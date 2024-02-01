@@ -100,6 +100,13 @@ def train(args):
     else:
         iteration = 0
 
+    # Checking gpu is being used
+    print("############## Checking GPU use ###############")
+    print("cuda is available: ", torch.cuda.is_available())
+    print("Number of gpus available: ", torch.cuda.device_count())
+    print("Current device in use: ", torch.cuda.current_device())
+    print("Device name: ", torch.cuda.get_device_name(0))
+
     # Parallel
     print('GPU number: {}'.format(torch.cuda.device_count()))
     model = torch.nn.DataParallel(model)
@@ -138,13 +145,12 @@ def train(args):
         mixup_augmenter = Mixup(mixup_alpha=1.)
      
     # Evaluator
-    evaluator = Evaluator(model=model)
+    evaluator = Evaluator(model=model) # class object with 'evaluate' method for calculating model accuracy. Unknown what data is used to test
     
     train_bgn_time = time.time()
     
     # Train on mini batches
     for batch_data_dict in train_loader:
-        print(iteration)
         
         # import crash
         # asdf
@@ -216,14 +222,14 @@ def train(args):
 
         # loss
         loss = loss_func(batch_output_dict, batch_target_dict)
-        print(iteration, loss)
+        
 
         # Backward
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
-        print(iteration)
+        print(iteration, loss)
         # Stop learning
         if iteration == stop_iteration:
             print('break')

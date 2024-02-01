@@ -96,6 +96,19 @@ a softmax layer to the end - it is in MODELS_NEW
     - note: right now it uses cpu, if want to use gpu need to change under transfer_cnn14_16k
 
 
+TODO
+- runme, main and transfer_cnn are all set to use cuda and gpu
+    - UPDATE: confirmed gpu is being used
+- figure out how the training is happening and if the model is converging or not/how to tell if it is converging
+    - loss is being printed every iteration
+    - seems to print validation score every 200 epochs - need to test this with proper dataset, since current one is giving val = 0.5 (as it should)
+- can you still run bandpass filters on a wav/mp3 file? Otherwise all my filtering is worthless
+- is the sampling rate correct given the mp3 -> wav conversion? Does the model work with raw mp3? If i use mp3 can i still run filters? Is it converting to mel spectrogram input? How tf does it work?
+    - model works with mp3 inputs
+- loss function choice: clip nll
+- optimiser: Adam
+
+can you run filters on wav/mp3? Does their code convert to mel spectrogram? how does it work?
 
 
 
