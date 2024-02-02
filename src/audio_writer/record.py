@@ -15,15 +15,11 @@ from record_mp3 import record_mp3
 from record_wavmp3 import record_wavmp3
 from record_np import record_np
 
-if __name__ == '__main__':
-    '''
-    print("Select function: 2-audio_visualiser, 1-audio_visualiserV2, 0-record_mp3")
-    visualise = int(input("Enter function number: ")) # visualise = 0 --> run record_mp3
-    '''
-    
+if __name__ == '__main__': 
     # Initialise important values 
-    num_mics = 2 # change based on number of mics connected to system
+    num_mics = 3 # change based on number of mics connected to system
     label = "/collision" # collision clips - affects the path location
+    start = "/1" # heading for the clips
     
     # important, used to create or overwrite file for recorded sound
     test = str(input("Enter test number: "))
@@ -39,25 +35,8 @@ if __name__ == '__main__':
     mp3_files = [None] * num_mics
     
     for i in range(1, num_mics+1):
-        wav_files[i-1] = "/home/acrv/blaw_ws/src/wav_data" + label + "/mic" + str(i) +"_test" + test + ".wav"
-        mp3_files[i-1] = "/home/acrv/blaw_ws/src/mp3_data" + label + "/mic" + str(i) + "_test" + test + ".mp3"
-    '''
-    # record_wav files
-    wavfile1 = "/home/acrv/blaw_ws/src/wav_data" + label + "/mic1_test" + test + ".wav"
-    wavfile2 = "/home/acrv/blaw_ws/src/wav_data" + label + "/mic2_test" + test + ".wav"
-    
-    if num_mics == 4:
-        wavfile3 = "/home/acrv/blaw_ws/src/wav_data" + label + "/mic3_test" + test + ".wav"
-        wavfile4 = "/home/acrv/blaw_ws/src/wav_data" + label + "/mic4_test" + test + ".wav"
-    
-    # record_mp3 files 
-    mp3file1 = "/home/acrv/blaw_ws/src/mp3_data" + label + "/mic1_test" + test + ".mp3"
-    mp3file2 = "/home/acrv/blaw_ws/src/mp3_data" + label + "/mic2_test" + test + ".mp3"
-    
-    if num_mics == 4:
-        mp3file3 = "/home/acrv/blaw_ws/src/mp3_data" + label + "/mic3_test" + test + ".mp3"
-        mp3file4 = "/home/acrv/blaw_ws/src/mp3_data" + label + "/mic4_test" + test + ".mp3"
-    '''
+        wav_files[i-1] = "/home/acrv/blaw_ws/src/wav_data" + label + start + "mic" + str(i) +"_test" + test + ".wav"
+        mp3_files[i-1] = "/home/acrv/blaw_ws/src/mp3_data" + label + start + "mic" + str(i) + "_test" + test + ".mp3"
     
     # Check if file exists - if so, terminate and throw error message
     if os.path.exists(wav_files[0]): 
@@ -83,32 +62,6 @@ if __name__ == '__main__':
         rospy.on_shutdown(wav_subscribers[i-1].shutdown_callback)
         #rospy.on_shutdown(mp3_subscribers[i-1].shutdown_callback)
         
-    '''
-    wav_record_1 = record_wav('/mic1/audio', wavfile1)
-    wav_record_2 = record_wav('/mic2/audio', wavfile2)
-    if num_mics == 4:
-        wav_record_3 = record_wav('/mic3/audio', wavfile3)
-        wav_record_4 = record_wav('/mic4/audio', wavfile4)
-    
-    mp3_record_1 = record_wav('/mic1/audio', mp3file1)
-    mp3_record_2 = record_wav('/mic2/audio', mp3file2)
-    if num_mics == 4:
-        mp3_record_3 = record_wav('/mic3/audio', mp3file3)
-        mp3_record_4 = record_wav('/mic4/audio', mp3file4)
-
-    # save appended data arrays after shutdown
-    rospy.on_shutdown(wav_record_1.shutdown_callback)
-    rospy.on_shutdown(wav_record_2.shutdown_callback)
-    rospy.on_shutdown(mp3_record_1.shutdown_callback)
-    rospy.on_shutdown(mp3_record_2.shutdown_callback)
-    
-    if num_mics == 4:
-        rospy.on_shutdown(wav_record_3.shutdown_callback)
-        rospy.on_shutdown(wav_record_4.shutdown_callback)
-        rospy.on_shutdown(mp3_record_3.shutdown_callback)
-        rospy.on_shutdown(mp3_record_4.shutdown_callback)
-    '''
-    
     # keeps the node running until interrupted (ctrl-c)
     rospy.spin()
     
