@@ -3,10 +3,15 @@
 import rospy
 import numpy as np
 import roslib; roslib.load_manifest('robotiq_2f_gripper_control')
-from robotiq.robotiq_2f_gripper_control.msg import _Robotiq2FGripper_robot_output  as outputMsg
-from robotiq.robotiq_2f_gripper_control.msg import _Robotiq2FGripper_robot_input  as inputMsg
+from robotiq_2f_gripper_control.msg import Robotiq2FGripper_robot_output as outputMsg
+#from robotiq.robotiq_2f_gripper_control.msg import _Robotiq2FGripper_robot_output  as outputMsg
+from robotiq_2f_gripper_control.msg import Robotiq2FGripper_robot_input as inputMsg
+#from robotiq.robotiq_2f_gripper_control.msg import _Robotiq2FGripper_robot_input  as inputMsg
+
+import robotiq_2f_gripper_control
+
 from geometry_msgs.msg import WrenchStamped
-from papillarray_ros_v2.msg import SensorState
+#from papillarray_ros_v2.msg import SensorState
 from std_msgs.msg import Bool
 import csv
 
@@ -14,9 +19,9 @@ class SensorisedGripper():
     def __init__(self):
         # set up gripper subscriber and publisher
         self.gripper_sub = rospy.Subscriber('/Robotiq2FGripperRobotInput', 
-            inputMsg.Robotiq2FGripper_robot_input, self.gripper_callback)
+            inputMsg, self.gripper_callback)
         self.gripper_pub = rospy.Publisher('/Robotiq2FGripperRobotOutput', 
-            outputMsg.Robotiq2FGripper_robot_output, queue_size=1)
+            outputMsg, queue_size=1)
 
         # max gripper width 180
         self.grip_width = 0
@@ -25,23 +30,23 @@ class SensorisedGripper():
         self.grip_inc = self.grip_bound / self.grip_dist
         
         # set up tactile sensor subscribers
-        self.tac0_data = SensorState()
-        self.tac1_data = SensorState()
+        # self.tac0_data = SensorState()
+        # self.tac1_data = SensorState()
 
         self.tac0_data_arr = [['seq','gfX','gfY','gfZ','gtX','gtY','gtZ']]
         self.tac1_data_arr = [['seq','gfX','gfY','gfZ','gtX','gtY','gtZ']]
 
-        self.tac0_sub = rospy.Subscriber('/hub_0/sensor_0', SensorState, self.sensor_callback, 0)
-        self.tac1_sub = rospy.Subscriber('/hub_0/sensor_1', SensorState, self.sensor_callback, 1)
+        # self.tac0_sub = rospy.Subscriber('/hub_0/sensor_0', SensorState, self.sensor_callback, 0)
+        # self.tac1_sub = rospy.Subscriber('/hub_0/sensor_1', SensorState, self.sensor_callback, 1)
         
-        self.tac0_contact = 0
-        self.tac1_contact = 0
+        # self.tac0_contact = 0
+        # self.tac1_contact = 0
 
         # set up FT 300 sensor subscriber
-        self.fts_data = WrenchStamped()
-        self.fts_data_arr = [['Fx','Fy','Fz','Mx','My','Mz']]
+        # self.fts_data = WrenchStamped()
+        # self.fts_data_arr = [['Fx','Fy','Fz','Mx','My','Mz']]
         
-        self.fts_sub = rospy.Subscriber('/robotiq_ft_wrench', WrenchStamped, self.ftSensor_callback)
+        # self.fts_sub = rospy.Subscriber('/robotiq_ft_wrench', WrenchStamped, self.ftSensor_callback)
 
         # wait for subscribers to initialise and update data in class parameters
         rospy.sleep(1)
@@ -76,7 +81,7 @@ class SensorisedGripper():
         'commands' Starts with all zeros, but lets be careful in case of future changes
         shitty implementation of manual setting of grip width, feed None into commandName to use
         '''
-        command = outputMsg.Robotiq2FGripper_robot_output()
+        command = outputMsg()
         if (grip_width is not None) and (self.max_grip_width >= grip_width >= 0):
             command.rACT = 1
             command.rGTO = 1
