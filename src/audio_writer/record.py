@@ -17,7 +17,7 @@ from record_np import record_np
 
 if __name__ == '__main__': 
     # Initialise important values 
-    num_mics = 3 # change based on number of mics connected to system
+    num_mics = 4 # change based on number of mics connected to system
     label = "/collision" # collision clips - affects the path location
     start = "/1" # heading for the clips
     
