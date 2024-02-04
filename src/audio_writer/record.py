@@ -51,17 +51,30 @@ if __name__ == '__main__':
     wav_subscribers = [None] * num_mics
     mp3_subscribers = [None] * num_mics
     
+    mic1 = record_wavmp3('/mic1/audio', wav_files[0], mp3_files[0])
+    mic2 = record_wavmp3('/mic2/audio', wav_files[1], mp3_files[1])
+    mic3 = record_wavmp3('/mic3/audio', wav_files[2], mp3_files[2])
+    mic4 = record_wavmp3('/mic4/audio', wav_files[3], mp3_files[3])
+    
+    rospy.on_shutdown(mic1.shutdown_callback)
+    rospy.on_shutdown(mic2.shutdown_callback)
+    rospy.on_shutdown(mic3.shutdown_callback)
+    rospy.on_shutdown(mic4.shutdown_callback)
+    '''
     for i in range(1, num_mics + 1):
         topic = "/mic" + str(i) + "/audio"
-        print(wav_files[i-1])
-        print(mp3_files[i-1])
+        #print(wav_files[i-1])
+        #print(mp3_files[i-1])
+        print(topic)
         wav_subscribers[i-1] = record_wavmp3(topic, wav_files[i-1], mp3_files[i-1])
         #mp3_subscribers[i-1] = record_mp3(topic, mp3_files[i-1])
     
     for i in range(1, num_mics + 1):
         rospy.on_shutdown(wav_subscribers[i-1].shutdown_callback)
         #rospy.on_shutdown(mp3_subscribers[i-1].shutdown_callback)
-        
+    '''
+    
+    
     # keeps the node running until interrupted (ctrl-c)
     rospy.spin()
     
