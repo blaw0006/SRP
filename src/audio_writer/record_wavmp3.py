@@ -26,10 +26,10 @@ class record_wavmp3():
         #self.lock = Lock() # create threadlock for thread synchronisation
         
         # Mic 2 
-        self.data2 = AudioSegment.silent(duration=0) # empty audiosegment that will be appended to each callback
-        self.wav_file_to_write2 = wav_file_to_write[1]
-        self.mp3_file_to_write2 = mp3_file_to_write[1]
-        rospy.Subscriber(topic2, inputMsg, self.audio_callback, callback_args=2)
+        # self.data2 = AudioSegment.silent(duration=0) # empty audiosegment that will be appended to each callback
+        # self.wav_file_to_write2 = wav_file_to_write[1]
+        # self.mp3_file_to_write2 = mp3_file_to_write[1]
+        # rospy.Subscriber(topic2, inputMsg, self.audio_callback, callback_args=2)
         
         
     def audio_callback(self, data, args):
@@ -61,16 +61,14 @@ class record_wavmp3():
         '''
         Note that all AudioSegment.from_file methods return an AudioSegment object.
         '''
-        print(self.data1)
-        print(self.data2)
         # convert audiosegment to wav/mp3 and export
         # Mic 1
         self.data1.export(self.wav_file_to_write1, format="wav") # save wav file first
         self.data1.export(self.mp3_file_to_write1, format="mp3") # save mp3 file
         
         # Mic 2
-        self.data2.export(self.wav_file_to_write2, format="wav")
-        self.data2.export(self.mp3_file_to_write2, format="mp3")
+        # self.data2.export(self.wav_file_to_write2, format="wav")
+        # self.data2.export(self.mp3_file_to_write2, format="mp3")
 
         # stop timing
         # end = time.time()
