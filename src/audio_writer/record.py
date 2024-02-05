@@ -17,7 +17,7 @@ from record_np import record_np
 
 if __name__ == '__main__': 
     # Initialise important values 
-    num_mics = 4 # change based on number of mics connected to system
+    num_mics = 2 # change based on number of mics connected to system
     label = "/collision" # collision clips - affects the path location
     start = "/1" # heading for the clips
     
@@ -51,15 +51,9 @@ if __name__ == '__main__':
     wav_subscribers = [None] * num_mics
     mp3_subscribers = [None] * num_mics
     
-    mic1 = record_wavmp3('/mic1/audio', wav_files[0], mp3_files[0])
-    mic2 = record_wavmp3('/mic2/audio', wav_files[1], mp3_files[1])
-    mic3 = record_wavmp3('/mic3/audio', wav_files[2], mp3_files[2])
-    mic4 = record_wavmp3('/mic4/audio', wav_files[3], mp3_files[3])
+    record = record_wavmp3('/mic1/audio', '/mic2/audio', wav_files, mp3_files)
     
-    rospy.on_shutdown(mic1.shutdown_callback)
-    rospy.on_shutdown(mic2.shutdown_callback)
-    rospy.on_shutdown(mic3.shutdown_callback)
-    rospy.on_shutdown(mic4.shutdown_callback)
+    rospy.on_shutdown(record.shutdown_callback)
     '''
     for i in range(1, num_mics + 1):
         topic = "/mic" + str(i) + "/audio"
