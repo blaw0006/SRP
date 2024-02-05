@@ -18,19 +18,21 @@ class record_wavmp3():
     def __init__(self, topic1, topic2, wav_file_to_write, mp3_file_to_write):
         rospy.init_node('record_wav', anonymous=True) # avoid duplicate node names with anonymous=True
         
-        print(topic1)
+        #print(topic1)
+        
         # Mic1
         self.data1 = AudioSegment.silent(duration=0) # empty audiosegment that will be appended to each callback
         self.wav_file_to_write1 = wav_file_to_write[0]
         self.mp3_file_to_write1 = mp3_file_to_write[0]
         rospy.Subscriber(topic1, inputMsg, self.audio_callback, callback_args=1)
-        #self.lock = Lock() # create threadlock for thread synchronisation
         
         # Mic 2 
-        # self.data2 = AudioSegment.silent(duration=0) # empty audiosegment that will be appended to each callback
-        # self.wav_file_to_write2 = wav_file_to_write[1]
-        # self.mp3_file_to_write2 = mp3_file_to_write[1]
-        # rospy.Subscriber(topic2, inputMsg, self.audio_callback, callback_args=2)
+        self.data2 = AudioSegment.silent(duration=0) # empty audiosegment that will be appended to each callback
+        self.wav_file_to_write2 = wav_file_to_write[1]
+        self.mp3_file_to_write2 = mp3_file_to_write[1]
+        rospy.Subscriber(topic2, inputMsg, self.audio_callback, callback_args=2)
+        
+        self.lock = Lock() # create threadlock for thread synchronisation
         
         
     def audio_callback(self, data, args):
@@ -42,7 +44,8 @@ class record_wavmp3():
         it to a bytestring (np.array(input) and np_array.tobytes() do not have to be used).
         '''
         audio_samples = data.data # need the .data field to access the mp3 data (hexadecimal bytestring of the form '\xff\xf3\xb8\xc4\r}d\x15\xd8')
-    
+        print(data)
+        
         # create AudioSegment object from the raw mp3 data
         audio_segment = AudioSegment(
             audio_samples,  
@@ -69,8 +72,8 @@ class record_wavmp3():
         self.data1.export(self.mp3_file_to_write1, format="mp3") # save mp3 file
         
         # Mic 2
-        # self.data2.export(self.wav_file_to_write2, format="wav")
-        # self.data2.export(self.mp3_file_to_write2, format="mp3")
+        self.data2.export(self.wav_file_to_write2, format="wav")
+        self.data2.export(self.mp3_file_to_write2, format="mp3")
 
         # stop timing
         # end = time.time()
