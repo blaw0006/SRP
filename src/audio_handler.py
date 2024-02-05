@@ -44,7 +44,15 @@ device was changed back after restarting the computer
 Running multiple nodes for multiple devices
 roslaunch audio_capture capture.launch device:="" ns:="bruh" seems to work when device is not specified (uses default)
 However, specifying device:="hw:2,0" raises a gstreamer: Internal data stream error
-- Update: need an underscore in front of the device, e.g., roslaunch audio_capture capture.launch _device:="hw:3,0" ns:="t1"
+- Update: need an underscore in front of the device, e.g., 
+        roslaunch audio_capture capture.launch _device:="hw:3,0" ns:="t1"   
+        roslaunch audio_capture capture.launch _device:="hw:2,0" ns:="mic1"
+        roslaunch audio_capture capture.launch _device:="hw:3,0" ns:="mic2"
+        roslaunch audio_capture capture.launch _device:="hw:4,0" ns:="mic3"
+        roslaunch audio_capture capture.launch _device:="hw:5,0" ns:="mic4"
+
+
+
 - However, this also seems to record data when a nonexistent device (hw:10,0) is used
 
 Converting AudioData Ros message to usable form
@@ -117,7 +125,19 @@ TODO
 - need to clean up the audio_writer - split the classes into a record_wav, record_np, record_mp3 files. Clean up and streamline the recording process
 - test record a few times. 
 
+Data collection issues
+- all clips are exactly the same
+    - issue: ALL TOPICS have the same data being published to them. Starting the subscriber node with the 'mic2'
+    topic specified will still stream data coming in from mic 1
+    - this is confirmed - mic 1 has been identified by subscribing to the mic1 topic and testing all mics. 
+    Meanwhile, subscribing to mic2/mic3 and tapping all mics gives silent clips ASIDE from when mic 1 is tapped
 
+To try:
+- try use the other usb dock with two mics connected and see if the same results occur
+    - doesnt make sense if it still doesnt work - running audio_writer with the old dock gave different npy
+- compare with audio_writer again
+- otherwise, it must be a roslaunch error? Must not be selecting the hardware device that i want to select - 
+so all the messages are coming from the same default source, mic1
 '''
 class audio_visualiser:
     def __init__(self):
