@@ -18,6 +18,7 @@ class record_wavmp3():
     def __init__(self, topic1, topic2, wav_file_to_write, mp3_file_to_write):
         rospy.init_node('record_wav', anonymous=True) # avoid duplicate node names with anonymous=True
         
+        print(topic1)
         # Mic1
         self.data1 = AudioSegment.silent(duration=0) # empty audiosegment that will be appended to each callback
         self.wav_file_to_write1 = wav_file_to_write[0]
@@ -63,6 +64,7 @@ class record_wavmp3():
         '''
         # convert audiosegment to wav/mp3 and export
         # Mic 1
+        print(self.mp3_file_to_write1)
         self.data1.export(self.wav_file_to_write1, format="wav") # save wav file first
         self.data1.export(self.mp3_file_to_write1, format="mp3") # save mp3 file
         
