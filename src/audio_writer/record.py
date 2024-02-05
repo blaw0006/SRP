@@ -51,7 +51,7 @@ if __name__ == '__main__':
     wav_subscribers = [None] * num_mics
     mp3_subscribers = [None] * num_mics
     
-    record = record_wavmp3('/mic1/audio', '/mic2/audio', wav_files, mp3_files)
+    record = record_wavmp3('/mic2/audio', '/mic2/audio', wav_files, mp3_files)
     
     rospy.on_shutdown(record.shutdown_callback)
     '''
