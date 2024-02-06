@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     for i in range(100):
         # Move the robot's effector slightly in the positive x-direction
-        translation = 0.1  # Adjust this value as needed
+        translation = 1  # Adjust this value as needed
         new_pose = Pose()
         new_pose.position.x = current_pose.position.x + translation
         new_pose.position.y = current_pose.position.y
@@ -39,13 +39,23 @@ if __name__ == "__main__":
         ur5.move_to_cartesian_goal(new_pose) # also plans and executes
 
         # Close the gripper 
-        gripper = SensorisedGripper()
-        gripper.send_gripper_command(commandName="close")
+        # gripper = SensorisedGripper()
+        # gripper.send_gripper_command(commandName="close")
         
         # Open the gripper
-        gripper.send_gripper_command(commandName="open")
+        #gripper.send_gripper_command(commandName="open")
         
         # return to start pose
         ur5.move_to_joints_goal(ur5.start_pose)
+        
+        # Move effector again
+        # new_pose = Pose()
+        # new_pose.position.x = current_pose.position.x - translation
+        # new_pose.position.y = current_pose.position.y
+        # new_pose.position.z = current_pose.position.z
+        # new_pose.orientation = current_pose.orientation
+        
+        # # return to start pose
+        # ur5.move_to_joints_goal(ur5.start_pose)
 
     rospy.spin()
