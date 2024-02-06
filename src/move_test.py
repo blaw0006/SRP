@@ -26,7 +26,7 @@ if __name__ == "__main__":
     # Fetch current end-effector pose
     current_pose = ur5.arm.get_current_pose().pose
 
-    for i in range(100):
+    for i in range(300):
         # Move the robot's effector slightly in the positive x-direction
         translation = 1  # Adjust this value as needed
         new_pose = Pose()
