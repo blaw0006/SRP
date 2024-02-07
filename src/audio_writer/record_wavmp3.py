@@ -54,7 +54,7 @@ class record_wavmp3():
             channels=1
         )
 
-        print(args)
+        #print(args)
         
         if args == 1:
             self.data1 = self.data1 + audio_segment # append the new data to self.data

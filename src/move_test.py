@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     for i in range(300):
         # Move the robot's effector slightly in the positive x-direction
-        translation = 1  # Adjust this value as needed
+        translation = 0.8  # Adjust this value as needed
         new_pose = Pose()
         new_pose.position.x = current_pose.position.x + translation
         new_pose.position.y = current_pose.position.y
