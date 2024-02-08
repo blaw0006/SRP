@@ -327,22 +327,22 @@ if __name__ == '__main__':
     file4 = "src/ur5_control/src/two_mic_tests/mic2_test" + test + ".wav"
     
     # record_mp3 files - currently set to no collision !!!!
-    file5 = "/home/acrv/blaw_ws/src/ur5_control/src/SRP/src/mp3_test/no_collision/0mic1_test" + test + ".mp3"
-    file6 = "/home/acrv/blaw_ws/src/ur5_control/src/SRP/src/mp3_test/no_collision/0mic2_test" + test + ".mp3"
+    file5 = "/home/acrv/blaw_ws/src/ur5_control/src/mp3_test/no_collision/0mic1_test" + test + ".mp3"
+    file6 = "/home/acrv/blaw_ws/src/ur5_control/src/mp3_test/no_collision/0mic2_test" + test + ".mp3"
     
     
     # starts subscriber node for each topic - MUST name the namespaces as t1 and t2 when roslaunching audio_common
     
     # choose if audio_visualiser or record_mp3 is used
     if visualise == 2: # original visualiser function
-        vis1 = audio_visualiser('/t1/audio', file1)    
-        vis2 = audio_visualiser('/t2/audio', file2)
+        vis1 = audio_visualiser('/mic1/audio', file1)    
+        vis2 = audio_visualiser('/mic2/audio', file2)
     elif visualise == 1: # visualiser v2 function
         vis1 = audio_visualiserV2('/t1/audio', file1, file3)
         vis2 = audio_visualiserV2('/t2/audio', file2, file4)
     else:  # record mp3 function
-        vis1 = record_mp3('/t1/audio', file5)
-        vis2 = record_mp3('/t2/audio', file6)
+        vis1 = record_mp3('/mic1/audio', file5)
+        vis2 = record_mp3('/mic2/audio', file6)
 
     # vis.visualise_audio() # calls the visualise method explicitly + separately from the callback. Calling 
     # within the callback makes more sense here since the visualisation is tied to the data being processed in callback
