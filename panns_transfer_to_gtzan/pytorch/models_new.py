@@ -2648,7 +2648,7 @@ class Transfer_Cnn14_16k(nn.Module):
             fmax, audioset_classes_num)
 
         # Transfer to another task layer
-        self.fc_transfer = nn.Linear(2048, classes_num, bias=True)
+        self.fc_transfer = nn.Linear(2048, classes_num, bias=True) # classes_num input arg == 2, to match number of output labels
 
         if freeze_base:
             # Freeze AudioSet pretrained layers
@@ -2669,10 +2669,10 @@ class Transfer_Cnn14_16k(nn.Module):
         """Input: (batch_size, data_length)
         """
         output_dict = self.base(input, mixup_lambda)
-        embedding = output_dict['embedding']
+        embedding = output_dict['embedding'] # embedding (transformed representation of data that has passed through previous layers)
 
-        clipwise_output =  torch.log_softmax(self.fc_transfer(embedding), dim=-1)
-        output_dict['clipwise_output'] = clipwise_output
+        clipwise_output =  torch.log_softmax(self.fc_transfer(embedding), dim=-1) # embedding is fed to appended transfer layer, and softmax is used for output
+        output_dict['clipwise_output'] = clipwise_output # save output dict (dict with probabilites of each possible output) 
  
         return output_dict
 

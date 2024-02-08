@@ -107,17 +107,42 @@ Training
     - either convert files to numpy -> filter -> back to wav for input to model, or just give raw unfiltered mp3 - could test which is better
 - is the sampling rate correct given the mp3 -> wav conversion? Does the model work with raw mp3? 
     - model works with mp3 inputs
-- loss function choice: clip nll
-- optimiser: Adam
+
 
 Issue: to apply filters, you need to convert wav/mp3 to numpy. The conversion back does not seem to be simple, so need to work out how to do that.
 No guarantee that filtered data is better, so try with raw data first. 
 
+Training (post data collection)
+- had soundfile issue stating that inputs were of the wrong format, after processing about 500 clips with the convert_to_hdf5 function
+    - solved by upgrading packages: https://github.com/bastibe/python-soundfile/issues/380
+- validation is giving 100% accuracy????
+- figure out how the training works
+    - parameters - check these are fine
+        - loss function choice: clip nll, negative log loss. Only works if a log softmax layer is the last layer, which it is (in models_new)
+        - optimiser: Adam
+    - what do resume_iteration and batch size do?
+        - resume_iteration is for if you want to continue training all parameters of a partially trained model
+        - parallel computation means that multiple pieces of data can be fed to the model at a time. Batch size is the number to be used for training
+        and evaluation at a time. Higher number means faster computation, but lower number is sometimes better for performance and training.
+    - how are the clips being fed to model? 
+    - how is validation occuring?
+
+
+- experiment with different parameters
+    - change holdout fold value
+        - holdout_fold=2 lowers the prediction rate to 99%
+    - change num_workers
+        - speedup seems negligible, currently set at 4 (from 1)
+        - info on data loaders and workers: https://pytorch.org/docs/stable/data.html
+    - change batch_size
+        - noticeably slows down processing, likely cos batch sizes are bigger --> longer time to process each batch
+        - currently set to 4 (from 2)
+
 TODO
-- need to clean up the audio_writer - split the classes into a record_wav, record_np, record_mp3 files. Clean up and streamline the recording process
-- test record a few times. 
-
-
+- train model for batch_size=4, holdout_fold=1 and batch_size=2, holdout_fold=2
+    - also try some other holdout_folds (don't train fully, just 200 epochs to see the prediction accuracy)
+- validate manually - feed clips to the saved model myself and see how it performs
+- test with difficult data ? Record clips of quiet objects being dropped and test the model - dont expect it to get all of them right
 '''
 class audio_visualiser:
     def __init__(self):

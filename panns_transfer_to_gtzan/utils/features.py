@@ -29,7 +29,10 @@ def pad_truncate_sequence(x, max_len):
 
 
 def pack_audio_files_to_hdf5(args):
-
+    '''
+    Function explores specified data folder, extracts data, and packs them to a single very large hdf5 waveform folder.
+    This is a hierarchical data structure file format that organises and stores the data, almost like a folder embedded as a file.
+    '''
     # Arguments & parameters
     dataset_dir = args.dataset_dir
     workspace = args.workspace
@@ -50,10 +53,10 @@ def pack_audio_files_to_hdf5(args):
         packed_hdf5_path = os.path.join(workspace, 'features', 'waveform.h5')
     create_folder(os.path.dirname(packed_hdf5_path))
 
-    (audio_names, audio_paths) = traverse_folder(audios_dir)
+    (audio_names, audio_paths) = traverse_folder(audios_dir) # recursively explores all folders to extract filenames and paths 
     
-    audio_names = sorted(audio_names) # contains names of spectra including .png
-    audio_paths = sorted(audio_paths) # contains path to spectra (within the label folders)
+    audio_names = sorted(audio_names) # contains names of files including .mp3
+    audio_paths = sorted(audio_paths) # contains path to files (within the label folders)
 
     # check the audio names in the directory
     # for i in audio_names:
@@ -111,12 +114,12 @@ def pack_audio_files_to_hdf5(args):
             dtype=np.int32)
  
         for n in range(audios_num):
-            print(n)
+            print(n) # this is the line printing file numbers that have been converted. Halts at around 500 - has issue around clip 500.
             audio_name = meta_dict['audio_name'][n]
             fold = meta_dict['fold'][n]
             audio_path = meta_dict['audio_path'][n]
             #(audio, fs) = librosa.core.load(audio_path, sr=sample_rate, mono=True)
-            (audio, fs) = librosa.load(audio_path, sr=sample_rate, mono=True)
+            (audio, fs) = librosa.load(audio_path, sr=sample_rate, mono=True) # specific line that is causing issues - update: upgrading package fixed it
 
             audio = pad_truncate_sequence(audio, clip_samples)
 

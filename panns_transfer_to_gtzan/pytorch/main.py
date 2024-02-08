@@ -45,9 +45,9 @@ def train(args):
     stop_iteration = args.stop_iteration
     device = 'cuda' if (args.cuda and torch.cuda.is_available()) else 'cpu'
     filename = args.filename
-    num_workers = 1
+    num_workers = 4
 
-    loss_func = get_loss_func(loss_type)
+    loss_func = get_loss_func(loss_type) # clip nll loss function being used
     pretrain = True if pretrained_checkpoint_path else False
     
     hdf5_path = os.path.join(workspace, 'features', 'waveform.h5')
@@ -145,7 +145,7 @@ def train(args):
         mixup_augmenter = Mixup(mixup_alpha=1.)
      
     # Evaluator
-    evaluator = Evaluator(model=model) # class object with 'evaluate' method for calculating model accuracy. Unknown what data is used to test
+    evaluator = Evaluator(model=model) # Initialises class object with 'evaluate' method for calculating model accuracy
     
     train_bgn_time = time.time()
     
@@ -165,7 +165,7 @@ def train(args):
 
                 train_fin_time = time.time()
 
-                statistics = evaluator.evaluate(validate_loader)
+                statistics = evaluator.evaluate(validate_loader) # data loader prepared above is used to evaluate model accuracy every 200 epochs
                 logging.info('Validate accuracy: {:.3f}'.format(statistics['accuracy']))
 
                 statistics_container.append(iteration, statistics, 'validate')
@@ -221,7 +221,7 @@ def train(args):
             """{'target': (batch_size, classes_num)}"""
 
         # loss
-        loss = loss_func(batch_output_dict, batch_target_dict)
+        loss = loss_func(batch_output_dict, batch_target_dict) # compares output dict produced by model to known labels prepared at the start
         
 
         # Backward
