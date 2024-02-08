@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import rospy
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import roslib; roslib.load_manifest('robotiq_2f_gripper_control')
 from pydub import AudioSegment
 from audio_common_msgs.msg import AudioData as inputMsg
@@ -9,58 +9,71 @@ from io import BytesIO
 from StringIO import StringIO
 from threading import Lock
 import time
-from record_mp3.py import record_mp3
-from record_wav.py import record_wav
-from record_np.py import record_np
+import os
+import sys
+from record_mp3 import record_mp3
+from record_wavmp3 import record_wavmp3
+from record_np import record_np
 
-if __name__ == '__main__':
-    print("Select function: 2-audio_visualiser, 1-audio_visualiserV2, 0-record_mp3")
-    visualise = int(input("Enter function number: ")) # visualise = 0 --> run record_mp3
-    
-    # start timing
-    start = time.time()
+if __name__ == '__main__': 
+    # Initialise important values 
+    num_mics = 1 # change based on number of mics connected to system
+    label = "/no_collision" # collision clips - affects the path location
+    start = "/0" # heading for the clips
     
     # important, used to create or overwrite file for recorded sound
     test = str(input("Enter test number: "))
     
     # creates a sound file for each mic
-    # visualiser 1 files
+    '''
+    # record_np 
     file1 = "src/ur5_control/src/two_mic_tests/mic1_test" + test + ".npy"
     file2 = "src/ur5_control/src/two_mic_tests/mic2_test" + test + ".npy"
-
-    # visualiser 2 files (wav and np)
-    file3 = "src/ur5_control/src/two_mic_tests/mic1_test" + test + ".wav"
-    file4 = "src/ur5_control/src/two_mic_tests/mic2_test" + test + ".wav"
+    '''
     
-    # record_mp3 files - currently set to no collision !!!!
-    file5 = "/home/acrv/blaw_ws/src/ur5_control/src/SRP/src/mp3_test/no_collision/0mic1_test" + test + ".mp3"
-    file6 = "/home/acrv/blaw_ws/src/ur5_control/src/SRP/src/mp3_test/no_collision/0mic2_test" + test + ".mp3"
+    wav_files = [None] * num_mics
+    mp3_files = [None] * num_mics
     
+    for i in range(1, num_mics+1):
+        wav_files[i-1] = "/home/acrv/blaw_ws/src/wav_data" + label + start + "mic" + str(i) +"_test" + test + ".wav"
+        mp3_files[i-1] = "/home/acrv/blaw_ws/src/mp3_data" + label + start + "mic" + str(i) + "_test" + test + ".mp3"
     
-    # starts subscriber node for each topic - MUST name the namespaces as t1 and t2 when roslaunching audio_common
+    # Check if file exists - if so, terminate and throw error message
+    if os.path.exists(wav_files[0]): 
+        override = int(input("Test already exists. Enter 1 to overwrite: "))
+        if override != 1:
+            sys.exit()
     
-    # choose if audio_visualiser or record_mp3 is used
-    if visualise == 2: # original visualiser function
-        vis1 = audio_visualiser('/t1/audio', file1)    
-        vis2 = audio_visualiser('/t2/audio', file2)
-    elif visualise == 1: # visualiser v2 function
-        vis1 = audio_visualiserV2('/t1/audio', file1, file3)
-        vis2 = audio_visualiserV2('/t2/audio', file2, file4)
-    else:  # record mp3 function
-        vis1 = record_mp3('/t1/audio', file5)
-        vis2 = record_mp3('/t2/audio', file6)
-
-    # vis.visualise_audio() # calls the visualise method explicitly + separately from the callback. Calling 
-    # within the callback makes more sense here since the visualisation is tied to the data being processed in callback
+    # start timing
+    start = time.time()
     
+    # starts subscriber node for each topic - MUST name the namespaces as mic1 and mic2 when roslaunching audio_common
+    wav_subscribers = [None] * num_mics
+    mp3_subscribers = [None] * num_mics
     
-    # save appended data arrays after shutdown
-    rospy.on_shutdown(vis1.shutdown_callback)
-    rospy.on_shutdown(vis2.shutdown_callback)
+    record = record_wavmp3('/mic1/audio', '/mic2/audio', wav_files, mp3_files)
+    
+    rospy.on_shutdown(record.shutdown_callback)
+    '''
+    for i in range(1, num_mics + 1):
+        topic = "/mic" + str(i) + "/audio"
+        #print(wav_files[i-1])
+        #print(mp3_files[i-1])
+        print(topic)
+        wav_subscribers[i-1] = record_wavmp3(topic, wav_files[i-1], mp3_files[i-1])
+        #mp3_subscribers[i-1] = record_mp3(topic, mp3_files[i-1])
+    
+    for i in range(1, num_mics + 1):
+        rospy.on_shutdown(wav_subscribers[i-1].shutdown_callback)
+        #rospy.on_shutdown(mp3_subscribers[i-1].shutdown_callback)
+    '''
     
     
     # keeps the node running until interrupted (ctrl-c)
     rospy.spin()
     
-   
+    # print time
+    end = time.time()
+    print("Time elapsed: ")
+    print(end-start)
     # 6326 6298 6491 6500 6200 6400

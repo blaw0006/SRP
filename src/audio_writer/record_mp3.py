@@ -63,5 +63,5 @@ class record_mp3():
         self.data.export(self.file_to_write, format="mp3")
         
         # stop timing
-        end = time.time()
-        print(end - start)
+        # end = time.time()
+        # print(end - start)

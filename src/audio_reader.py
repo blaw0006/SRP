@@ -164,7 +164,7 @@ if __name__ == '__main__':
     #audio_reader("src/ur5_control/src/bruh.npy")
     
     # change i range to match the number of tests
-    test_start = input("Enter test start: ")x
+    test_start = input("Enter test start: ")
     test_end = input("Enter test end: ")
     
     for i in range(test_start,test_end+1):
