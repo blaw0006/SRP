@@ -15,7 +15,7 @@ class record_wavmp3():
     actual pydub conversion function to convert to wav + frombuffer to convert to np, rather than
     using hidden methods to convert to wav as in audio_visualiser
     '''
-    def __init__(self, topic1, topic2, wav_file_to_write, mp3_file_to_write):
+    def __init__(self, topic, wav_file_to_write, mp3_file_to_write):
         rospy.init_node('record_wav', anonymous=True) # avoid duplicate node names with anonymous=True
         
         #print(topic1)
@@ -24,13 +24,13 @@ class record_wavmp3():
         self.data1 = AudioSegment.silent(duration=0) # empty audiosegment that will be appended to each callback
         self.wav_file_to_write1 = wav_file_to_write[0]
         self.mp3_file_to_write1 = mp3_file_to_write[0]
-        rospy.Subscriber(topic1, inputMsg, self.audio_callback, callback_args=1)
+        rospy.Subscriber(topic, inputMsg, self.audio_callback, callback_args=1)
         
         # Mic 2 
         # self.data2 = AudioSegment.silent(duration=0) # empty audiosegment that will be appended to each callback
         # self.wav_file_to_write2 = wav_file_to_write[1]
         # self.mp3_file_to_write2 = mp3_file_to_write[1]
-        # rospy.Subscriber(topic2, inputMsg, self.audio_callback, callback_args=2)
+        # rospy.Subscriber(topic2, inputMsg, self.audio_callback2, callback_args=2)
         
         #self.lock = Lock() # create threadlock for thread synchronisation
         
@@ -60,6 +60,26 @@ class record_wavmp3():
             self.data1 = self.data1 + audio_segment # append the new data to self.data
         elif args == 2:
             self.data2 = self.data2 + audio_segment
+    
+    
+    # def audio_callback2(self, data, args):
+    #     audio_samples = data.data # need the .data field to access the mp3 data (hexadecimal bytestring of the form '\xff\xf3\xb8\xc4\r}d\x15\xd8')
+    #     #print(data)
+        
+    #     # create AudioSegment object from the raw mp3 data
+    #     audio_segment = AudioSegment(
+    #         audio_samples,  
+    #         sample_width=2, # sample width is number of bytes used to represent one element-> S16LE means 16 bit byte width
+    #         frame_rate=16000,
+    #         channels=1
+    #     )
+
+    #     #print(args)
+        
+    #     if args == 1:
+    #         self.data1 = self.data1 + audio_segment # append the new data to self.data
+    #     elif args == 2:
+    #         self.data2 = self.data2 + audio_segment
     
     def shutdown_callback(self):
         '''
