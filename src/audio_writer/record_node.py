@@ -82,8 +82,12 @@ class record_node():
         
 if __name__ == '__main__': 
     rospy.init_node('record_node', anonymous=True)  # Initialize ROS node
-    topic = rospy.get_param("~topic")  # Get topic parameter from ROS parameter server
-    test_number = rospy.get_param("~test_number")  # Get test_number parameter from ROS parameter server
-    mic = rospy.get_param("~mic")  # Get mic parameter from ROS parameter server
-    node = record_node(topic, test_number, mic)  # Instantiate record_node with parameters
+    
+    # Get params from ros param server (passed there by launch file)
+    topic = rospy.get_param("~topic")  
+    test_number = rospy.get_param("~test_number")  
+    mic = rospy.get_param("~mic")  
+    
+    # Instantiate record_node and spin
+    node = record_node(topic, test_number, mic) 
     rospy.spin()  # Start ROS node
