@@ -73,12 +73,16 @@ class record_node():
         # convert audiosegment to wav/mp3 and export
         # Mic 1
         print(self.mp3_file_to_write)
-        self.data.export(self.wav_file_to_write, format="wav") # save wav file first
-        self.data.export(self.mp3_file_to_write, format="mp3") # save mp3 file
+        
+        try:
+            self.data.export(self.wav_file_to_write, format="wav") # save wav file first
+            self.data.export(self.mp3_file_to_write, format="mp3") # save mp3 file
+        except Exception as e:
+            rospy.logerr("Error exporting audio data: %s", str(e))
 
         # stop timing
         end = time.time()
-        print(end - self.start)
+        rospy.loginfo("Recording duration: %.2f seconds", end - self.start)
         
 if __name__ == '__main__': 
     rospy.init_node('record_node', anonymous=True)  # Initialize ROS node
