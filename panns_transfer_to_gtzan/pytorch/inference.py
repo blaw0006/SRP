@@ -30,7 +30,7 @@ def audio_tagging(args):
     mel_bins = args.mel_bins
     fmin = args.fmin
     fmax = args.fmax
-    model_type = args.model_type
+    model_type = args.model_type # Transfer_cnn14_16k
     #freeze_base = args.freeze_base # added this so it accepts this argument
     checkpoint_path = args.checkpoint_path
     audio_path = args.audio_path
@@ -45,7 +45,7 @@ def audio_tagging(args):
         hop_size=hop_size, mel_bins=mel_bins, fmin=fmin, fmax=fmax, 
         classes_num=classes_num, freeze_base=True)
     
-    checkpoint = torch.load(checkpoint_path, map_location=device)
+    checkpoint = torch.load(checkpoint_path, map_location=device) # load trained model
     model.load_state_dict(checkpoint['model']) # error loading state dict 
 
     # Parallel
@@ -65,7 +65,7 @@ def audio_tagging(args):
     # Forward
     with torch.no_grad():
         model.eval()
-        batch_output_dict = model(waveform, None)
+        batch_output_dict = model(waveform, None) 
 
     clipwise_output = batch_output_dict['clipwise_output'].data.cpu().numpy()[0]
     """(classes_num,)"""

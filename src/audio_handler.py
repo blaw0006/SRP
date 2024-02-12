@@ -173,6 +173,11 @@ TODO
 - validate manually - feed clips to the saved model myself and see how it performs
 - test with difficult data ? Record clips of quiet objects being dropped and test the model - dont expect it to get all of them right
 
+Isolating problem of multiple mics
+- capture.launch command is not correct - selects hw:2,0 by default, hence why all mics are recording the same thing
+- low level alsa issue where only one mic is allowed, so it is publishing messages to all audio_capture topics - NOTE: prolly not this since it worked once before
+- subscription/ns issue NOTE: likely not this either
+
 '''
 class audio_visualiser:
     def __init__(self):

@@ -75,7 +75,6 @@ class record_node():
         Note that all AudioSegment.from_file methods return an AudioSegment object.
         '''
         # convert audiosegment to wav/mp3 and export
-        # Mic 1
         print(self.mp3_file_to_write)
         
         try:
