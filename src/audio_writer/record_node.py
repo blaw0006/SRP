@@ -31,9 +31,12 @@ class record_node():
         
         # Check if file exists - if so, terminate and throw error message
         if os.path.exists(self.wav_file_to_write) or os.path.exists(self.mp3_file_to_write): 
-            override = int(input("Test already exists. Enter 1 to overwrite: "))
-            if override != 1:
-                sys.exit()
+            rospy.signal_shutdown("File already exists. Delete it first if you wish to overwrite.")
+        
+        # if os.path.exists(self.wav_file_to_write) or os.path.exists(self.mp3_file_to_write): 
+        #     override = int(input("Test already exists. Enter 1 to overwrite: "))
+        #     if override != 1:
+        #         sys.exit()
         
         # start timing
         self.start = time.time()
