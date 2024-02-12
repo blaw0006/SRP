@@ -173,22 +173,6 @@ TODO
 - validate manually - feed clips to the saved model myself and see how it performs
 - test with difficult data ? Record clips of quiet objects being dropped and test the model - dont expect it to get all of them right
 
-
-
- <!-- Instance 3 -->
-  <node pkg="ur5_control" type="record_node.py" name="record_node" output="screen" ns="mic3">
-    <param name="topic" value="/mic3/audio"/>
-    <param name="test_number" value="$(arg test_number)"/>
-    <param name="mic" value="3"/>
-  </node>
-
-<!-- Instance 4 -->
-  <node pkg="ur5_control" type="record_node.py" name="record_node" output="screen" ns="mic4">
-    <param name="topic" value="/mic4/audio"/>
-    <param name="test_number" value="$(arg test_number)"/>
-    <param name="mic" value="4"/>
-  </node>
-
 '''
 class audio_visualiser:
     def __init__(self):
