@@ -48,7 +48,7 @@ However, specifying device:="hw:2,0" raises a gstreamer: Internal data stream er
         roslaunch audio_capture capture.launch _device:="hw:3,0" ns:="t1"   
         roslaunch audio_capture capture.launch _device:="hw:2,0" ns:="mic1"
         roslaunch audio_capture capture.launch _device:="hw:3,0" ns:="mic2"
-        roslaunch audio_capture capture.launch _device:="hw:4,0" ns:="mic3"
+        roslaunch audio_capture capture.launch _device:="hw:4,0" ns:="mic3" 
         roslaunch audio_capture capture.launch _device:="hw:5,0" ns:="mic4"
 
 
@@ -168,15 +168,22 @@ Training (post data collection)
         - currently set to 4 (from 2)
 
 TODO
-- train model for batch_size=4, holdout_fold=1 and batch_size=2, holdout_fold=2
+- training
+    - train model for batch_size=4, holdout_fold=1 and batch_size=2, holdout_fold=2
     - also try some other holdout_folds (don't train fully, just 200 epochs to see the prediction accuracy)
-- validate manually - feed clips to the saved model myself and see how it performs
-- test with difficult data ? Record clips of quiet objects being dropped and test the model - dont expect it to get all of them right
+    - validate manually - feed clips to the saved model myself and see how it performs
+    - test with difficult data ? Record clips of quiet objects being dropped and test the model - dont expect it to get all of them right
+- multiple mics issue
+    - have a single launch file for all audio_capture nodes - pass arguments in there to reduce risk of syntax error (with command line coding)
+        - also include the audio_topic argument, maybe it needs to be specified
+    - Try listening to two mics, try with different ports, try without the usb dock (connect directly to the computer)
 
 Isolating problem of multiple mics
 - capture.launch command is not correct - selects hw:2,0 by default, hence why all mics are recording the same thing
 - low level alsa issue where only one mic is allowed, so it is publishing messages to all audio_capture topics - NOTE: prolly not this since it worked once before
 - subscription/ns issue NOTE: likely not this either
+
+
 
 '''
 class audio_visualiser:
