@@ -11,6 +11,7 @@ from threading import Lock
 import time
 import os
 import sys
+
 class record_node():
     ''' Alternate version of audio_visualiser that accumulates data as audiosegments then uses the 
     actual pydub conversion function to convert to wav + frombuffer to convert to np, rather than
@@ -29,10 +30,13 @@ class record_node():
         self.mp3_file_to_write = "/home/acrv/blaw_ws/src/mp3_data" + label + start + "mic" + str(mic) + "_test" + str(test_number) + ".mp3"
         
         # Check if file exists - if so, terminate and throw error message
-        if os.path.exists(self.wav_file_to_write) or os.path.exists(self.mp3_file_to_write): 
-            override = int(input("Test already exists. Enter 1 to overwrite: "))
-            if override != 1:
-                sys.exit()
+        if os.path.exists(self.mp3_file_to_write): 
+            rospy.signal_shutdown("File already exists. Delete it first if you wish to overwrite.")
+        
+        # if os.path.exists(self.wav_file_to_write) or os.path.exists(self.mp3_file_to_write): 
+        #     override = int(input("Test already exists. Enter 1 to overwrite: "))
+        #     if override != 1:
+        #         sys.exit()
         
         # start timing
         self.start = time.time()
@@ -72,20 +76,25 @@ class record_node():
         # convert audiosegment to wav/mp3 and export
         # Mic 1
         print(self.mp3_file_to_write)
-        self.data.export(self.wav_file_to_write, format="wav") # save wav file first
-        self.data.export(self.mp3_file_to_write, format="mp3") # save mp3 file
+        
+        try:
+            self.data.export(self.wav_file_to_write, format="wav") # save wav file first
+            self.data.export(self.mp3_file_to_write, format="mp3") # save mp3 file
+        except Exception as e:
+            rospy.logerr("Error exporting audio data: %s", str(e))
+
         # stop timing
         end = time.time()
-        print(end - self.start)
-
+        rospy.loginfo("Recording duration: %.2f seconds", end - self.start)
+        
 if __name__ == '__main__': 
     rospy.init_node('record_node', anonymous=True)  # Initialize ROS node
-
+    
     # Get params from ros param server (passed there by launch file)
     topic = rospy.get_param("~topic")  
     test_number = rospy.get_param("~test_number")  
     mic = rospy.get_param("~mic")  
-
+    
     # Instantiate record_node and spin
     node = record_node(topic, test_number, mic) 
     rospy.spin()  # Start ROS node
