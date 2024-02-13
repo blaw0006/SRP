@@ -75,7 +75,8 @@ def audio_tagging(args):
     # Print audio tagging top probabilities
     for k in range(2): # altered to two since there are only two possible outputs (unlike the 500 for AudioNet)
         print('{}: {:.3f}'.format(np.array(labels)[sorted_indexes[k]], 
-            clipwise_output[sorted_indexes[k]]))
+            np.exp(clipwise_output[sorted_indexes[k]]))
+            )
 
     # Print embedding
     if 'embedding' in batch_output_dict.keys():
