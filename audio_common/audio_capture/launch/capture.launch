@@ -7,21 +7,22 @@
       Try to start multiple nodes with different group tags (namespaces)
       -->
   <arg name="dst" default="appsink"/>
-  <arg name="device" default=""/>
-  <arg name="format" default="mp3"/>
+  <!-- <arg name="device" default="hw:2,0"/> -->
+  <arg name="format" default="mp3"/>  
   <arg name="bitrate" default="128"/>
   <arg name="channels" default="1"/>
   <arg name="depth" default="16"/>
   <arg name="sample_rate" default="16000"/>
   <arg name="sample_format" default="S16LE"/>
-  <arg name="ns" default="audio"/>
-  <arg name="audio_topic" default="audio"/>
+  <arg name="ns" default="audio"/> <!-- namespace  -->
+  <arg name="audio_topic" default="audio"/> <!-- rostopic name: e.g., namespace/audio_topic is where data is published-->
+  <!--arg name="dst" default="/home/acrv/blaw_ws/src/ur5_control/src/mp3_test/tst"/-->
 
-  <group ns="$(arg ns)">
+  <group ns="mic1">
     <node name="audio_capture" pkg="audio_capture" type="audio_capture" output="screen">
       <remap from="audio" to="$(arg audio_topic)" />
-      <param name="dst" value="$(arg dst)"/>
-      <param name="device" value="arg device"/>
+      <!--param name="dst" value="$(arg dst)"/-->
+      <param name="device" value="plughw:2,0"/> 
       <param name="format" value="$(arg format)"/>
       <param name="bitrate" value="$(arg bitrate)"/>
       <param name="channels" value="$(arg channels)"/>
@@ -30,12 +31,12 @@
       <param name="sample_format" value="$(arg sample_format)"/>
     </node>
   </group>
-  <!--
+  
   <group ns="mic2">
     <node name="audio_capture" pkg="audio_capture" type="audio_capture" output="screen">
       <remap from="audio" to="$(arg audio_topic)" />
       <param name="dst" value="$(arg dst)"/>
-      <param name="device" value="hw:3,0"/>
+      <param name="device" value="plughw:3,0"/>
       <param name="format" value="$(arg format)"/>
       <param name="bitrate" value="$(arg bitrate)"/>
       <param name="channels" value="$(arg channels)"/>
@@ -49,7 +50,7 @@
     <node name="audio_capture" pkg="audio_capture" type="audio_capture" output="screen">
       <remap from="audio" to="$(arg audio_topic)" />
       <param name="dst" value="$(arg dst)"/>
-      <param name="device" value="hw:4,0"/>
+      <param name="device" value="plughw:4,0"/>
       <param name="format" value="$(arg format)"/>
       <param name="bitrate" value="$(arg bitrate)"/>
       <param name="channels" value="$(arg channels)"/>
@@ -63,7 +64,7 @@
     <node name="audio_capture" pkg="audio_capture" type="audio_capture" output="screen">
       <remap from="audio" to="$(arg audio_topic)" />
       <param name="dst" value="$(arg dst)"/>
-      <param name="device" value="h:5,0"/>
+      <param name="device" value="plughw:5,0"/>
       <param name="format" value="$(arg format)"/>
       <param name="bitrate" value="$(arg bitrate)"/>
       <param name="channels" value="$(arg channels)"/>
@@ -72,6 +73,6 @@
       <param name="sample_format" value="$(arg sample_format)"/>
     </node>
   </group>
-  -->
+  
 
 </launch>

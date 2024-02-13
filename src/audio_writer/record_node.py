@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#! /usr/bin/env python
 import rospy
 import numpy as np
 import matplotlib.pyplot as plt
@@ -57,7 +57,7 @@ class record_node():
         '''
         audio_samples = data.data # need the .data field to access the mp3 data (hexadecimal bytestring of the form '\xff\xf3\xb8\xc4\r}d\x15\xd8')
         #print(data)
-        
+    
         # create AudioSegment object from the raw mp3 data
         audio_segment = AudioSegment(
             audio_samples,  
@@ -95,6 +95,7 @@ if __name__ == '__main__':
     test_number = rospy.get_param("~test_number")  
     mic = rospy.get_param("~mic")  
     
+    print(topic)
     # Instantiate record_node and spin
     node = record_node(topic, test_number, mic) 
     rospy.spin()  # Start ROS node
