@@ -18,8 +18,8 @@ from record_np import record_np
 if __name__ == '__main__': 
     # Initialise important values 
     num_mics = 1 # change based on number of mics connected to system
-    label = "/no_collision" # collision clips - affects the path location
-    start = "/0" # heading for the clips
+    label = "/collision" # collision clips - affects the path location
+    start = "/1" # heading for the clips
     
     # important, used to create or overwrite file for recorded sound
     test = str(input("Enter test number: "))

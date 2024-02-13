@@ -167,6 +167,8 @@ Training (post data collection)
         - noticeably slows down processing, likely cos batch sizes are bigger --> longer time to process each batch
         - currently set to 4 (from 2)
 
+
+
 TODO
 - training
     - train model for batch_size=4, holdout_fold=1 and batch_size=2, holdout_fold=2
@@ -176,14 +178,31 @@ TODO
 - multiple mics issue
     - have a single launch file for all audio_capture nodes - pass arguments in there to reduce risk of syntax error (with command line coding)
         - also include the audio_topic argument, maybe it needs to be specified
+        - doesn't allow me to pass the device argument in the launch script? Even tho they specify hw:0,0 is
+        correct format
     - Try listening to two mics, try with different ports, try without the usb dock (connect directly to the computer)
-
+    
 Isolating problem of multiple mics
 - capture.launch command is not correct - selects hw:2,0 by default, hence why all mics are recording the same thing
 - low level alsa issue where only one mic is allowed, so it is publishing messages to all audio_capture topics - NOTE: prolly not this since it worked once before
 - subscription/ns issue NOTE: likely not this either
 
+TODO
+- unplug and replug mics and record clips - check if the order of the clips stays the same, if so, number them
+- design the data collection trials with Eric's help
+- change the filename and destination handling in record_node based on new labelling
 
+Attempts to fix mics
+- NOTE: issue isolated - device was not being passed to the ros server (tried rosparam list and rosparam get ___)
+while the audio_capture node was running and nothing was returned
+    - this means that the default device was being used, hence why all clips showed the right thing
+- using plughw instead of hw works 
+
+mic 3                       mic 1
+
+
+
+mic 2                       mic 4
 
 '''
 class audio_visualiser:
