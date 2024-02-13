@@ -19,16 +19,47 @@ class record_node():
     using hidden methods to convert to wav as in audio_visualiser
     '''
     def __init__(self, topic, test_number, mic):
+        # obtain label number
+        tens = (test_number // 10) % 10
+        ones = test_number % 10
+        label_num = tens * 10 + ones
+        
+        if low<label_num<hi:
+            label_num -= low
+            
+        # obtain label
+        labels = ["/x=_y=",
+            "/x=_y=",
+            "/x=_y=",
+            "/x=_y=",
+            "/x=_y=",
+            "/x=_y=",
+            "/x=_y=",
+            "/x=_y=",
+            "/x=_y=",
+            "/x=_y=",
+            "/x=_y=",
+            "/x=_y=",
+            "/x=_y=",
+            "/x=_y=",
+            "/x=_y=",
+            
+        ]
+        
+        label = labels[label_num]
+        
         # Initialise important values 
-        label = "/collision" # collision clips - affects the path location
-        start = "/1" # heading for the clips
+        #label = "/collision" # collision clips - affects the path location
+        #start = "/1" # heading for the clips
         
         # important, used to create or overwrite file for recorded sound
         #test = str(input("Enter test number: "))
         
         # creates a sound file 
-        self.wav_file_to_write = "/home/acrv/blaw_ws/src/wav_data" + label + start + "mic" + str(mic) +"_test" + str(test_number) + ".wav"
-        self.mp3_file_to_write = "/home/acrv/blaw_ws/src/mp3_data" + label + start + "mic" + str(mic) + "_test" + str(test_number) + ".mp3"
+        #self.wav_file_to_write = "/home/acrv/blaw_ws/src/wav_data" + label + start + "mic" + str(mic) +"_test" + str(test_number) + ".wav"
+        #self.mp3_file_to_write = "/home/acrv/blaw_ws/src/mp3_data" + label + start + "mic" + str(mic) + "_test" + str(test_number) + ".mp3"
+        self.wav_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/wav_data" + label + "mic" + str(mic) + "_test" + str(test_number) + ".wav"
+        self.mp3_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/mp3_data" + label + "mic" + str(mic) + "_test" + str(test_number) + ".mp3"
         
         # Check if file exists - if so, terminate and throw error message
         if os.path.exists(self.mp3_file_to_write): 

@@ -1,7 +1,10 @@
 <launch>
-  <!-- Launch multiple instances of record_wavmp3 node with different topics and files -->
+  <!-- Launch multiple instances of record_wavmp3 node with different topics and files 
+        run ###  roslaunch ur5_control record.launch test_number:="1004"   ###
+        and change the test number as needed
+-->
 
-  <arg name="test_number" default="1002"/>
+  <arg name="test_number" default="1003"/>
 
   <!-- Instance 1 -->
   <node pkg="ur5_control" type="record_node.py" name="record_node" output="screen" ns="mic1">
