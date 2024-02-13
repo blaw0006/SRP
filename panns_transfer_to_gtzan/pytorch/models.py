@@ -195,6 +195,7 @@ class Transfer_Cnn14(nn.Module):
         embedding = output_dict['embedding']
 
         clipwise_output =  torch.log_softmax(self.fc_transfer(embedding), dim=-1) # feed final embedding to the appended output layer
+        # NOTE: softmax produces probability 0<prob<1. Log then will produce a number 0<x<-inf. Need to exp this value to get prob back 
         output_dict['clipwise_output'] = clipwise_output
  
         return output_dict
