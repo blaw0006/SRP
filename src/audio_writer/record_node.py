@@ -12,6 +12,7 @@ from threading import Lock
 import time
 import os
 import sys
+import re
 
 class record_node():
     ''' Alternate version of audio_visualiser that accumulates data as audiosegments then uses the 
@@ -19,34 +20,88 @@ class record_node():
     using hidden methods to convert to wav as in audio_visualiser
     '''
     def __init__(self, topic, test_number, mic):
-        # obtain label number
-        tens = (test_number // 10) % 10
-        ones = test_number % 10
-        label_num = tens * 10 + ones
+        # Find test number 
+        folder_path = "/home/acrv/blaw_ws/src/4_mic_data/mp3_data/"
+
+        # Get all files in the folder
+        files = os.listdir(folder_path)
+
+        # Regular expression pattern to match test numbers
+        pattern = r"test(\d+)_"
+
+        # Initialize the highest test number
+        highest_test_num = 0
+
+        # Iterate through the files and extract test numbers
+        if not files:
+            highest_test_num = 0
+        else:
+            for file in files:
+                match = re.search(pattern, file)
+                if match:
+                    test_num = int(match.group(1))
+                    if test_num > highest_test_num:
+                        highest_test_num = test_num
+
+        # Increment the highest test number by 1
+        test_number = highest_test_num + 1
         
-        if low<label_num<hi:
-            label_num -= low
-            
+        # Encode drop position (x,y,z)
+        label_num = test_number % 68 - 1 # -1 due to zero indexing
+        #tens = (test_number // 10) % 10
+        #ones = test_number % 10
+        #label_num = tens * 10 + ones
+        z = 10
+        
+        if 17<=label_num<=33:
+            label_num -= 17
+            z = 20
+        elif 34<=label_num<=50:
+            label_num -= 34
+            z = 30
+        elif 51<=label_num<=67:
+            label_num -= 51
+            z = 40
+        
         # obtain label
-        labels = ["/x=_y=",
-            "/x=_y=",
-            "/x=_y=",
-            "/x=_y=",
-            "/x=_y=",
-            "/x=_y=",
-            "/x=_y=",
-            "/x=_y=",
-            "/x=_y=",
-            "/x=_y=",
-            "/x=_y=",
-            "/x=_y=",
-            "/x=_y=",
-            "/x=_y=",
-            "/x=_y=",
-            
+        labels = ["x=-25,y=25,",
+            "x=0,y=25,",
+            "x=25,y=25,",
+            "x=0,y=15,",
+            "x=-7.5,y=7.5,",
+            "x=7.5,y=7.5,",
+            "x=-25,y=0,",
+            "x=-15,y=0,",
+            "x=0,y=0,",
+            "x=15,y=0,",
+            "x=25,y=0,",
+            "x=-7.5,y=-7.5,",
+            "x=7.5,y=-7.5,",
+            "x=0,y=-15,",
+            "x=-25,y=-25,",
+            "x=0,y=-25,",
+            "x=25,y=-25,",
         ]
         
         label = labels[label_num]
+        label = "/position(" + label + "z=" + str(z) + ")_"
+        
+        # print messages
+        print("Drop position: %d" % (label_num + 1))
+        if test_number % 17 == 0:
+            print("########\nLast drop for this height, switch to height %s for next drop" % (z+10))
+        if test_number % 68 == 0:
+            print("########\nLast drop for this object, switch object for next drop.")
+        
+        
+        # Encode mic position
+        mic_positions = ["(x=15,y=15)", "(x=-15,y=15)", "(x=-15,y=-15)", "(x=15,y=-15)"]
+        mic_position = mic_positions[mic-1]
+        
+        # Encode object
+        object_num = (test_number) % 680
+        object_num = object_num // 68 + 1
+        object_str = "_object" + str(object_num)
         
         # Initialise important values 
         #label = "/collision" # collision clips - affects the path location
@@ -58,8 +113,8 @@ class record_node():
         # creates a sound file 
         #self.wav_file_to_write = "/home/acrv/blaw_ws/src/wav_data" + label + start + "mic" + str(mic) +"_test" + str(test_number) + ".wav"
         #self.mp3_file_to_write = "/home/acrv/blaw_ws/src/mp3_data" + label + start + "mic" + str(mic) + "_test" + str(test_number) + ".mp3"
-        self.wav_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/wav_data" + label + "mic" + str(mic) + "_test" + str(test_number) + ".wav"
-        self.mp3_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/mp3_data" + label + "mic" + str(mic) + "_test" + str(test_number) + ".mp3"
+        self.wav_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/wav_data" + label + "mic" + str(mic)  + mic_position + "_test" + str(test_number) + object_str + ".wav"
+        self.mp3_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/mp3_data" + label + "mic" + str(mic)  + mic_position + "_test" + str(test_number) + object_str + ".mp3"
         
         # Check if file exists - if so, terminate and throw error message
         if os.path.exists(self.mp3_file_to_write): 
