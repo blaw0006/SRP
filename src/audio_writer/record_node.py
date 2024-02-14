@@ -64,23 +64,23 @@ class record_node():
             z = 40
         
         # obtain label
-        labels = ["x=-25,y=25,",
-            "x=0,y=25,",
-            "x=25,y=25,",
-            "x=0,y=15,",
-            "x=-7.5,y=7.5,",
-            "x=7.5,y=7.5,",
-            "x=-25,y=0,",
-            "x=-15,y=0,",
+        labels = ["x=-60,y=20,",
+            "x=0,y=20,",
+            "x=60,y=20,",
+            "x=0,y=10,",
+            "x=-16.66,y=5,",
+            "x=16.66,y=5,",
+            "x=-50,y=0,",
+            "x=-33.33,y=0,",
             "x=0,y=0,",
-            "x=15,y=0,",
-            "x=25,y=0,",
-            "x=-7.5,y=-7.5,",
-            "x=7.5,y=-7.5,",
-            "x=0,y=-15,",
-            "x=-25,y=-25,",
-            "x=0,y=-25,",
-            "x=25,y=-25,",
+            "x=33.33,y=0,",
+            "x=50,y=0,",
+            "x=-16.66,y=-5,",
+            "x=16.66,y=-5,",
+            "x=0,y=-10,",
+            "x=-60,y=-20,",
+            "x=0,y=-20,",
+            "x=60,y=-20,",
         ]
         
         label = labels[label_num]
@@ -95,7 +95,7 @@ class record_node():
         
         
         # Encode mic position
-        mic_positions = ["(x=15,y=15)", "(x=-15,y=15)", "(x=-15,y=-15)", "(x=15,y=-15)"]
+        mic_positions = ["(x=50,y=10)", "(x=-50,y=10)", "(x=-50,y=-10)", "(x=50,y=-10)"]
         mic_position = mic_positions[mic-1]
         
         # Encode object
@@ -104,8 +104,8 @@ class record_node():
         object_str = "_object" + str(object_num)
         
         # Initialise important values 
-        #label = "/collision" # collision clips - affects the path location
-        #start = "/1" # heading for the clips
+        collision_label = "/collision" # collision clips - affects the path location
+        start = "/1" # heading for the clips
         
         # important, used to create or overwrite file for recorded sound
         #test = str(input("Enter test number: "))
@@ -113,8 +113,8 @@ class record_node():
         # creates a sound file 
         #self.wav_file_to_write = "/home/acrv/blaw_ws/src/wav_data" + label + start + "mic" + str(mic) +"_test" + str(test_number) + ".wav"
         #self.mp3_file_to_write = "/home/acrv/blaw_ws/src/mp3_data" + label + start + "mic" + str(mic) + "_test" + str(test_number) + ".mp3"
-        self.wav_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/wav_data" + "/test" + str(test_number) + label + "mic" + str(mic) + mic_position + object_str + ".wav"
-        self.mp3_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/mp3_data" + "/test" + str(test_number) + label + "mic" + str(mic) + mic_position + object_str + ".mp3"
+        self.wav_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/wav_data" + collision_label + start + "_test" + str(test_number) + label + "mic" + str(mic) + mic_position + object_str + ".wav"
+        self.mp3_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/mp3_data" + collision_label + start + "_test" + str(test_number) + label + "mic" + str(mic) + mic_position + object_str + ".mp3"
         
         # Check if file exists - if so, terminate and throw error message
         if os.path.exists(self.mp3_file_to_write): 
