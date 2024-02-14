@@ -84,7 +84,7 @@ class record_node():
         ]
         
         label = labels[label_num]
-        label = "/position(" + label + "z=" + str(z) + ")_"
+        label = "_position(" + label + "z=" + str(z) + ")_"
         
         # print messages
         print("Drop position: %d" % (label_num + 1))
@@ -113,8 +113,8 @@ class record_node():
         # creates a sound file 
         #self.wav_file_to_write = "/home/acrv/blaw_ws/src/wav_data" + label + start + "mic" + str(mic) +"_test" + str(test_number) + ".wav"
         #self.mp3_file_to_write = "/home/acrv/blaw_ws/src/mp3_data" + label + start + "mic" + str(mic) + "_test" + str(test_number) + ".mp3"
-        self.wav_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/wav_data" + label + "mic" + str(mic)  + mic_position + "_test" + str(test_number) + object_str + ".wav"
-        self.mp3_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/mp3_data" + label + "mic" + str(mic)  + mic_position + "_test" + str(test_number) + object_str + ".mp3"
+        self.wav_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/wav_data" + "/test" + str(test_number) + label + "mic" + str(mic) + mic_position + object_str + ".wav"
+        self.mp3_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/mp3_data" + "/test" + str(test_number) + label + "mic" + str(mic) + mic_position + object_str + ".mp3"
         
         # Check if file exists - if so, terminate and throw error message
         if os.path.exists(self.mp3_file_to_write): 
