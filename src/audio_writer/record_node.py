@@ -20,8 +20,12 @@ class record_node():
     using hidden methods to convert to wav as in audio_visualiser
     '''
     def __init__(self, topic, test_number, mic):
+        # Initialise important values 
+        collision_label = "/no_collision" # collision clips - affects the path location
+        start = "/0" # heading for the clips
+        
         # Find test number 
-        folder_path = "/home/acrv/blaw_ws/src/4_mic_data/mp3_data/"
+        folder_path = "/home/acrv/blaw_ws/src/4_mic_data/mp3_data" + collision_label
 
         # Get all files in the folder
         files = os.listdir(folder_path)
@@ -47,7 +51,13 @@ class record_node():
         test_number = highest_test_num + 1
         
         # Encode drop position (x,y,z)
-        label_num = test_number % 68 - 1 # -1 due to zero indexing
+        label_num = 0
+        
+        if label_num == test_number % 68:
+            label_num = 67
+        else:
+            label_num = test_number % 68 - 1 # -1 due to zero indexing
+            
         #tens = (test_number // 10) % 10
         #ones = test_number % 10
         #label_num = tens * 10 + ones
@@ -100,12 +110,13 @@ class record_node():
         
         # Encode object
         object_num = (test_number) % 680
-        object_num = object_num // 68 + 1
+        if object_num % 68 == 0:
+            object_num = object_num // 68
+        else:
+            object_num = object_num // 68 + 1
         object_str = "_object" + str(object_num)
         
-        # Initialise important values 
-        collision_label = "/collision" # collision clips - affects the path location
-        start = "/1" # heading for the clips
+        
         
         # important, used to create or overwrite file for recorded sound
         #test = str(input("Enter test number: "))
