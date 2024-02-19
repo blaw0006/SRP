@@ -109,7 +109,7 @@ class record_node():
         mic_position = mic_positions[mic-1]
         
         # Encode object
-        object_num = (test_number) % 680
+        object_num = (test_number) % 612
         if object_num % 68 == 0:
             object_num = object_num // 68
         else:
