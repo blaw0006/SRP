@@ -25,7 +25,7 @@ class record_node():
         start = "/0" # heading for the clips
         
         # Find test number 
-        folder_path = "/home/acrv/blaw_ws/src/4_mic_data/mp3_data" + collision_label
+        folder_path = "/home/acrv/blaw_ws/src/ur5_control/src/4_mic_data/mp3_data" + collision_label
 
         # Get all files in the folder
         files = os.listdir(folder_path)
@@ -124,8 +124,10 @@ class record_node():
         # creates a sound file 
         #self.wav_file_to_write = "/home/acrv/blaw_ws/src/wav_data" + label + start + "mic" + str(mic) +"_test" + str(test_number) + ".wav"
         #self.mp3_file_to_write = "/home/acrv/blaw_ws/src/mp3_data" + label + start + "mic" + str(mic) + "_test" + str(test_number) + ".mp3"
-        self.wav_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/wav_data" + collision_label + start + "_test" + str(test_number) + label + "mic" + str(mic) + mic_position + object_str + ".wav"
-        self.mp3_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/mp3_data" + collision_label + start + "_test" + str(test_number) + label + "mic" + str(mic) + mic_position + object_str + ".mp3"
+        # self.wav_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/wav_data" + collision_label + start + "_test" + str(test_number) + label + "mic" + str(mic) + mic_position + object_str + ".wav"
+        # self.mp3_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/mp3_data" + collision_label + start + "_test" + str(test_number) + label + "mic" + str(mic) + mic_position + object_str + ".mp3"
+        self.wav_file_to_write = "/home/acrv/blaw_ws/src/ur5_control/src/4_mic_data/wav_data" + collision_label + start + "_test" + str(test_number) + label + "mic" + str(mic) + mic_position + object_str + ".wav"
+        self.mp3_file_to_write = "/home/acrv/blaw_ws/src/ur5_control/src/4_mic_data/mp3_data" + collision_label + start + "_test" + str(test_number) + label + "mic" + str(mic) + mic_position + object_str + ".mp3"
         
         # Check if file exists - if so, terminate and throw error message
         if os.path.exists(self.mp3_file_to_write): 

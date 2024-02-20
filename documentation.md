@@ -3,7 +3,7 @@ upload the trained models??? Or just leave locally, tell them where it is and ho
 
 Recording
 - check they are connected with arecord -l
-- using audio_capture
+- using ur5_control capture2.launch
 - using record.launch and record_node (check the labels and stuff)
 
 Experimental setup
