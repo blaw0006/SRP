@@ -20,7 +20,8 @@ older version of a package, especially when working with ROS Melodic - here you 
 
 <h3>Recording</h3>
 <h4> Connecting microphones </h4>
-This section will outline how to record audio clips with the contact microphones. Connect microphones -> usb-to-jack adaptor -> usb dock -> PC. 
+This section will outline how to record audio clips with the contact microphones. Connect microphones - usb-to-jack adaptor - usb dock - PC. 
+
 Run ```arecord -l``` to check that the devices are connected properly. This commands lists all available **input** devices. The devices will appear similar to:
 
 card 2: Device [USB PnP Sound Device], device 0: USB Audio [USB Audio]
@@ -30,7 +31,9 @@ card 2: Device [USB PnP Sound Device], device 0: USB Audio [USB Audio]
 The first two devices typically correspond to the PC's in-built microphones, whilst usb connected devices will have "USB Pnp Sound Device" or "USB Audio device in their name".
 
 <h4> Running capture.launch files </h4>
+
 Under audio_capture/launch/ is a ROS launch file called ```capture.launch```. This file starts multiple instances of the ```audio_capture``` publisher node - one instance for each microphone that you wish to listen to. The launch file does this by specifying the hardware device that each node should publish messages from, in the form of an argument similar to ```plughw:2,0``` where the first number refers to the **card number** of the device, and the second number refers to the **device number**. This particular argument would specify the example audio device listed with ```arecord -l``` in the section above. You must also specify the ```ns``` and ```audio_topic``` arguments. These determine the name of the ROS topic that the audio data will be published to by the audio_capture node - it will be of the form <ns>/<audio_topic>. The other arguments are related to the properties of the audio data to be published and should not be changed unless you are using different microphones.
+
 
 ```roslaunch ur5_control capture.launch``` runs the launchfile. If this doesn't work, try
 ```roslaunch <catkin_package> capture.launch``` where <catkin_package> is the name of the catkin workspace that the audio_common folder is under. 
@@ -46,6 +49,7 @@ Similarly, ```rosparam list``` will list the parameters on the ROS server.
 Note that the launch file is currently setup for four microphones. If you wish to use more, you will need to write another code block specifying the namespace, audio_topic, and device parameters of the new microphones.
 
 <h4> Running record.launch files </h4>
+
 Under src/audio_writer is a ROS launch file called record.launch. This file starts an instance of the subscriber node, record_node.py, for every mic. The file specifies the ROS topic for each node to subscribe to as well as the mic number. The mic number is only relevant for file naming purposes. **test number** is another parameter for file naming. Note that record node will by default search your specified destination filepath (where audio clips will be saved) for the file with the largest test number, and will automatically set the test_number param to the largest test_number + 1. This way the launchfile can be run without specifying the test_number param and it will automatically increment this value for you. **If you wish to specify a test number yourself**, comment out the marked code block in record_node.py and change the default value for test_number in record.launch.
 
 ```roslaunch ur5_control record.launch``` or ```roslaunch <catkin_package> capture.launch``` will run the launch file. You can also run 
@@ -53,7 +57,7 @@ Under src/audio_writer is a ROS launch file called record.launch. This file star
 
 If using this file to record, you will likely need to change some filepaths in record_node.py. The ```folder_path``` variable will need to be changed to wherever you will store your mp3 files. Same with the ```self.wav_file_to_write``` and ```self.mp3_file_to_write``` variables. The file assumes that you have folders setup with the following form: 
 
-data
+Data_folder
   - mp3_data
       - collision
         - collision cases here
@@ -70,8 +74,8 @@ It may be better to change since you will likely not be working with collision a
 The file also generates labels for naming files on the assumption that you are dropping objects at one of the 17 marked positions near the UR5 robot, in the numbered order. 
 
 <h3>Training models</h3>
-The models and much of the training code was adapted from ______
-For my project I took models pretrained on AudioSet and finetuned them on my recorded audio data. To do this, I first downloaded the model from _____.
+The models and much of the training code were adapted from https://github.com/qiuqiangkong/audioset_tagging_cnn and https://github.com/qiuqiangkong/panns_transfer_to_gtzan. 
+For my project I took models pretrained on AudioSet and finetuned them on my recorded audio data. To do this, I first downloaded the model from https://zenodo.org/records/3987831. 
 
 <h3>Using runme.sh to finetune models</h3>
 Under src/panns_transfer_to_gtzan there is a bash script called runme.sh. This file calls the functions defined by the PANNs researchers. The DATASET_DIR is where the mp3 data is located. WORKSPACE is where the training code will save checkpoints. 
