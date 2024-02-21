@@ -45,7 +45,7 @@ Similarly, ```rosparam list``` will list the parameters on the ROS server.
 
 Note that the launch file is currently setup for four microphones. If you wish to use more, you will need to write another code block specifying the namespace, audio_topic, and device parameters of the new microphones.
 
-<h4> Running record.launch files <h4>
+<h4> Running record.launch files </h4>
 Under src/audio_writer is a ROS launch file called record.launch. This file starts an instance of the subscriber node, record_node.py, for every mic. The file specifies the ROS topic for each node to subscribe to as well as the mic number. The mic number is only relevant for file naming purposes. **test number** is another parameter for file naming. Note that record node will by default search your specified destination filepath (where audio clips will be saved) for the file with the largest test number, and will automatically set the test_number param to the largest test_number + 1. This way the launchfile can be run without specifying the test_number param and it will automatically increment this value for you. **If you wish to specify a test number yourself**, comment out the marked code block in record_node.py and change the default value for test_number in record.launch.
 
 ```roslaunch ur5_control record.launch``` or ```roslaunch <catkin_package> capture.launch``` will run the launch file. You can also run 
@@ -69,11 +69,11 @@ It may be better to change since you will likely not be working with collision a
 
 The file also generates labels for naming files on the assumption that you are dropping objects at one of the 17 marked positions near the UR5 robot, in the numbered order. 
 
-<h3>Training models<h3>
+<h3>Training models</h3>
 The models and much of the training code was adapted from ______
 For my project I took models pretrained on AudioSet and finetuned them on my recorded audio data. To do this, I first downloaded the model from _____.
 
-<h3>Using runme.sh to finetune models<h3>
+<h3>Using runme.sh to finetune models</h3>
 Under src/panns_transfer_to_gtzan there is a bash script called runme.sh. This file calls the functions defined by the PANNs researchers. The DATASET_DIR is where the mp3 data is located. WORKSPACE is where the training code will save checkpoints. 
 
 The first command in the script calls the ```pack_audio_files_to_hdf5``` function, which converts the mp3 files and stores them in a hierarchical data format. This is how the function stores the data and accesses it in the training code. Alternatively you could write your own training code that converts the mp3 data to mel spectrograms and feeds it to the pretrained model, but this isn't recommended unless you have knowledge of PyTorch and CNNs. 
@@ -84,7 +84,7 @@ Every 200 epochs of training, the code will test the model-in-training against a
 
 ```./runme.sh``` whilst in the directory that holds the bash script will run it.
 
-<h4>Using inference.sh to validate models<h4>
+<h4>Using inference.sh to validate models</h4>
 ```CHECKPOINT_PATH``` holds the trained model that you wish to test.
 ```audio_path``` is the path of the mp3 file that you wish to test the model with. 
 Running the code should print the probabilities of each label to the terminal. 
