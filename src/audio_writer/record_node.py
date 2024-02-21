@@ -20,10 +20,14 @@ class record_node():
     using hidden methods to convert to wav as in audio_visualiser
     '''
     def __init__(self, topic, test_number, mic):
-        # Initialise important values 
+        # Initialise collision labels. 
+        # collision_label = "/collision" 
+        # start = "/1"
+        
         collision_label = "/no_collision" # collision clips - affects the path location
         start = "/0" # heading for the clips
         
+        ####################### Comment out this block if you wish to specify test number argument
         # Find test number 
         folder_path = "/home/acrv/blaw_ws/src/ur5_control/src/4_mic_data/mp3_data" + collision_label
 
@@ -49,6 +53,8 @@ class record_node():
 
         # Increment the highest test number by 1
         test_number = highest_test_num + 1
+        ##########################
+        
         
         # Encode drop position (x,y,z)
         label_num = 0

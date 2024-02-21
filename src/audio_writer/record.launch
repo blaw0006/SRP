@@ -1,7 +1,6 @@
 <launch>
   <!-- Launch multiple instances of record_wavmp3 node with different topics and files 
-        run ###  roslaunch ur5_control record.launch test_number:="1"   ###
-        and change the test number as needed
+        run ###  roslaunch ur5_control record.launch  ###
 -->
 
   <arg name="test_number" default="1003"/>
