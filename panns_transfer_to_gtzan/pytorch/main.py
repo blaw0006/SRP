@@ -18,7 +18,7 @@ from losses import get_loss_func
 from pytorch_utils import move_data_to_device, do_mixup
 from utilities import (create_folder, get_filename, create_logging, StatisticsContainer, Mixup)
 from data_generator import GtzanDataset, TrainSampler, EvaluateSampler, collate_fn
-from models import Transfer_Cnn14
+#from models import Transfer_Cnn14
 from models_new import (Cnn14, Cnn14_no_specaug, Cnn14_no_dropout, 
     Cnn6, Cnn10, ResNet22, ResNet38, ResNet54, Cnn14_emb512, Cnn14_emb128, 
     Cnn14_emb32, MobileNetV1, MobileNetV2, LeeNet11, LeeNet24, DaiNet19, 
@@ -30,7 +30,7 @@ from evaluate import Evaluator
 
 def train(args):
 
-    # Arugments & parameters
+    # Arguments & parameters
     dataset_dir = args.dataset_dir
     workspace = args.workspace
     holdout_fold = args.holdout_fold
