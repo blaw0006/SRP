@@ -6,6 +6,7 @@ Data collection was integrated with ROS as much as possible and requires:
 - Python 2.7
 
 Training code requires a later version of Python and ROS:
+
 - ROS Noetic
 - Ubuntu 20.04
 - Python 3+
@@ -97,6 +98,7 @@ Every 200 epochs of training, the code will test the model-in-training against a
 ```./runme.sh``` whilst in the directory that holds the bash script will run it.
 
 <h4>Using inference.sh to validate models</h4>
+
 ```CHECKPOINT_PATH``` holds the trained model that you wish to test.
 ```audio_path``` is the path of the mp3 file that you wish to test the model with. 
 Running the code should print the probabilities of each label to the terminal. 
