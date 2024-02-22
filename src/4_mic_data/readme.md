@@ -11,6 +11,3 @@ Object 7: Coles aluminium foil
 Object 8: Coles medistrips 30 pack 
 Object 9: Ball
 
-
-redo test 399 sunscreen
-redo test 1080

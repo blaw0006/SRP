@@ -1,8 +1,6 @@
 #!/usr/bin/bash
 CHECKPOINT_PATH="/home/acrv/blaw_ws/workspace/checkpoints/main/holdout_fold=2/Transfer_Cnn14_16k/pretrain=True/loss_type=clip_nll/augmentation=mixup/batch_size=4/freeze_base=False/10000_iterations.pth"   
-#wget -O $CHECKPOINT_PATH https://zenodo.org/record/3987831/files/Cnn14_16k_mAP%3D0.438.pth?download=1
 MODEL_TYPE="Transfer_Cnn14_16k"
-#MODEL_TYPE="Cnn14_16k"
 CUDA_VISIBLE_DEVICES=0 python3 /home/acrv/blaw_ws/ur5_control/src/SRP/panns_transfer_to_gtzan/pytorch/inference.py audio_tagging \
     --sample_rate=16000 \
     --window_size=512 \

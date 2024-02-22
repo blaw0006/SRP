@@ -64,9 +64,6 @@ class record_node():
         else:
             label_num = test_number % 68 - 1 # -1 due to zero indexing
             
-        #tens = (test_number // 10) % 10
-        #ones = test_number % 10
-        #label_num = tens * 10 + ones
         z = 10
         
         if 17<=label_num<=33:
@@ -128,10 +125,6 @@ class record_node():
         #test = str(input("Enter test number: "))
         
         # creates a sound file 
-        #self.wav_file_to_write = "/home/acrv/blaw_ws/src/wav_data" + label + start + "mic" + str(mic) +"_test" + str(test_number) + ".wav"
-        #self.mp3_file_to_write = "/home/acrv/blaw_ws/src/mp3_data" + label + start + "mic" + str(mic) + "_test" + str(test_number) + ".mp3"
-        # self.wav_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/wav_data" + collision_label + start + "_test" + str(test_number) + label + "mic" + str(mic) + mic_position + object_str + ".wav"
-        # self.mp3_file_to_write = "/home/acrv/blaw_ws/src/4_mic_data/mp3_data" + collision_label + start + "_test" + str(test_number) + label + "mic" + str(mic) + mic_position + object_str + ".mp3"
         self.wav_file_to_write = "/home/acrv/blaw_ws/src/ur5_control/src/4_mic_data/wav_data" + collision_label + start + "_test" + str(test_number) + label + "mic" + str(mic) + mic_position + object_str + ".wav"
         self.mp3_file_to_write = "/home/acrv/blaw_ws/src/ur5_control/src/4_mic_data/mp3_data" + collision_label + start + "_test" + str(test_number) + label + "mic" + str(mic) + mic_position + object_str + ".mp3"
         
@@ -147,8 +140,7 @@ class record_node():
         # start timing
         self.start = time.time()
         
-        #rospy.init_node('record_wav', anonymous=True) # avoid duplicate node names with anonymous=True
-        self.data = AudioSegment.silent(duration=0) # empty audiosegment that will be appended to each callback
+        self.data = AudioSegment.silent(duration=0) # empty audiosegment. Each callback, data will be appended and stored in this instance variable
         rospy.Subscriber(topic, inputMsg, self.audio_callback)
         rospy.on_shutdown(self.shutdown_callback)
         
@@ -201,6 +193,7 @@ if __name__ == '__main__':
     mic = rospy.get_param("~mic")  
     
     print(topic)
+    
     # Instantiate record_node and spin
     node = record_node(topic, test_number, mic) 
-    rospy.spin()  # Start ROS node
+    rospy.spin()  

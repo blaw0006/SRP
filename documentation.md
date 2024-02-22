@@ -100,9 +100,3 @@ Every 200 epochs of training, the code will test the model-in-training against a
 ```CHECKPOINT_PATH``` holds the trained model that you wish to test.
 ```audio_path``` is the path of the mp3 file that you wish to test the model with. 
 Running the code should print the probabilities of each label to the terminal. 
-
-
-
-
-upload models
-add comments

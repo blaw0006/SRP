@@ -206,16 +206,16 @@ class Transfer_Cnn14_16k(nn.Module):
         fmax, classes_num, freeze_base):
         """Classifier for a new task using pretrained Cnn14_16k as a sub module.
         """
-        super(Transfer_Cnn14, self).__init__()
+        super(Transfer_Cnn14, self).__init__() 
         audioset_classes_num = 527
         
         self.base = Cnn14_16k(sample_rate, window_size, hop_size, mel_bins, fmin, 
-            fmax, audioset_classes_num)
+            fmax, audioset_classes_num) # initialise base model 
 
         # Transfer to another task layer
-        self.fc_transfer = nn.Linear(2048, classes_num, bias=True)
+        self.fc_transfer = nn.Linear(2048, classes_num, bias=True) # classes num is the output shape of the layer
 
-        if freeze_base:
+        if freeze_base: # normally when training freeze_base will be False to allow finetuning of weights
             # Freeze AudioSet pretrained layers
             for param in self.base.parameters():
                 param.requires_grad = False
@@ -227,7 +227,7 @@ class Transfer_Cnn14_16k(nn.Module):
 
     def load_from_pretrain(self, pretrained_checkpoint_path):
         #checkpoint = torch.load(pretrained_checkpoint_path)
-        checkpoint = torch.load(pretrained_checkpoint_path, map_location=torch.device('cpu'))
+        checkpoint = torch.load(pretrained_checkpoint_path, map_location=torch.device('cpu')) # load pretrained model 
         self.base.load_state_dict(checkpoint['model'])
 
     def forward(self, input, mixup_lambda=None):
@@ -236,7 +236,8 @@ class Transfer_Cnn14_16k(nn.Module):
         output_dict = self.base(input, mixup_lambda)
         embedding = output_dict['embedding']
 
-        clipwise_output =  torch.log_softmax(self.fc_transfer(embedding), dim=-1)
+        clipwise_output =  torch.log_softmax(self.fc_transfer(embedding), dim=-1) # feed final embedding to the appended output layer
+        # NOTE: softmax produces probability 0<prob<1. Log then will produce a number 0<x<-inf. Need to exp this value to get prob again
         output_dict['clipwise_output'] = clipwise_output
  
         return output_dict
