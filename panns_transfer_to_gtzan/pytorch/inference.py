@@ -1,9 +1,11 @@
 import os
+import re
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '../utils'))
 import numpy as np
 import argparse
 import librosa
+#import ffmpeg
 import matplotlib.pyplot as plt
 import torch
 
@@ -56,33 +58,143 @@ def audio_tagging(args):
     else:
         print('Using CPU.')
     
-    # Load audio
-    (waveform, _) = librosa.core.load(audio_path, sr=sample_rate, mono=True)
+    # Get files in specified folder
+    files = os.listdir(audio_path)
+    object_files = [[] for _ in range(9)]
+    drop_height_files = [[] for _ in range(4)]
+    drop_location_files = [[] for _ in range(17)]
 
-    waveform = waveform[None, :]    # (1, audio_length)
-    waveform = move_data_to_device(waveform, device)
 
-    # Forward
-    with torch.no_grad():
-        model.eval()
-        batch_output_dict = model(waveform, None) 
+    ##### Apply filters to get certain files ######
+    ### Filter files per object ###
+    for filename in files:
+        for i in range(1,10): # add file to correct inner list based on object number
+            if f"object{i}" in filename:
+                object_files[i-1].append(os.path.join(audio_path, filename))
+    
+    print("##### Object files #####")
+    for i, inner_list in enumerate(object_files):
+        print(f"Files for object {i+1}:")
+        print(len(inner_list))
 
-    clipwise_output = batch_output_dict['clipwise_output'].data.cpu().numpy()[0]
-    """(classes_num,)"""
+    
+    ### Filter files per drop height ###
+    pattern = r'_test(\d+)_'
+    for filename in files: 
+        match = re.search(pattern, filename)
+        if match:
+            test_number = int(match.group(1))
+            
+            # Calculate starting test number
+            object_test = (int(test_number) - 1) % 68 + 1
 
-    sorted_indexes = np.argsort(clipwise_output)[::-1]
+            # Add file to correct list based on drop height (test number)
+            if object_test <= 17:
+                drop_height_files[0].append(os.path.join(audio_path, filename))
+            elif object_test <= 34:
+                drop_height_files[1].append(os.path.join(audio_path, filename))
+            elif object_test <= 51:
+                drop_height_files[2].append(os.path.join(audio_path, filename))
+            elif object_test <= 68:
+                drop_height_files[3].append(os.path.join(audio_path, filename))
 
-    # Print audio tagging top probabilities
-    for k in range(2): # altered to two since there are only two possible outputs (unlike the 500 for AudioNet)
-        print('{}: {:.3f}'.format(np.array(labels)[sorted_indexes[k]], 
-            np.exp(clipwise_output[sorted_indexes[k]]))
-            )
+    print("##### Drop height files #####")
 
-    # Print embedding
-    if 'embedding' in batch_output_dict.keys():
-        embedding = batch_output_dict['embedding'].data.cpu().numpy()[0]
-        print('embedding: {}'.format(embedding.shape))
+    for i, inner_list in enumerate(drop_height_files):
+        print(f"Files for drop height {i+1}:")
+        print(len(inner_list))
 
+
+    ### Filter files for drop location ###
+    for filename in files:
+        # Extract the test number from the filename
+        match = re.search(pattern, filename)
+        if match:
+            test_number = int(match.group(1))
+        
+            # Determine the drop location based on the test number
+            if test_number % 17 == 0:
+                drop_location = 16
+            else:
+                drop_location = test_number % 17 - 1
+
+            # if drop_location == 0:
+            #     print(test_number)
+
+            # Add the file to the correct inner list
+            drop_location_files[drop_location].append(os.path.join(audio_path, filename))
+
+    print("### Drop location ###")
+
+    for i, inner_list in enumerate(drop_location_files):
+        print(f"Files for drop location {i+1}:")
+        print(len(inner_list))
+
+
+    ##### Test model #####
+    ### Compare objects ###
+    object_accuracy = []
+    height_accuracy = []
+    location_accuracy = []
+    object_number = 1
+    total = 0
+    correct_predictions = 0
+    outputs = []
+
+    for inner_list in object_files: # change object_files to whatever data you need, the rest of the loop can stay the same
+        correct_predictions = 0
+        total = 0
+
+        for file_path in inner_list:
+            try:
+                (waveform, _) = librosa.load(file_path, sr=sample_rate, mono=True)
+                waveform = waveform[None, :]    # (1, audio_length)
+                waveform = move_data_to_device(waveform, device)
+
+                # Forward
+                with torch.no_grad():
+                    model.eval()
+                    batch_output_dict = model(waveform, None) 
+
+                clipwise_output = batch_output_dict['clipwise_output'].data.cpu().numpy()[0]
+                """(classes_num,)"""
+
+                #sorted_indexes = np.argsort(clipwise_output)[::-1]
+                
+                # clipwise_output[1] is collision probability, clipwise_output[0] is no_collision probability
+                # if prob(collision) > prob(no_collision) and collision==True
+                if clipwise_output[1] > clipwise_output[0] and os.path.basename(file_path).startswith("1"):
+                    correct_predictions += 1
+                # if prob(no_collision) > prob(collision) and no_collision==True
+                elif clipwise_output[0] > clipwise_output[1] and os.path.basename(file_path).startswith("0"):
+                    correct_predictions += 1
+                # Print audio tagging top probabilities
+                # for k in range(2): # altered to two since there are only two possible outputs (unlike the 500 for AudioNet)
+                #     print('{}: {:.3f}'.format(np.array(labels)[sorted_indexes[k]], 
+                #         np.exp(clipwise_output[k]))
+                #         )
+
+                total += 1
+
+
+                # Print embedding
+                # if 'embedding' in batch_output_dict.keys():
+                #     embedding = batch_output_dict['embedding'].data.cpu().numpy()[0]
+                #     print('embedding: {}'.format(embedding.shape))
+            except Exception as e:
+                print(e)
+                continue
+        
+        # Save accuracy for that object
+        print(correct_predictions)
+        print(total)
+        accuracy = correct_predictions/total
+        object_accuracy.append(accuracy)
+        print(f"Object number: {object_number}")
+        print(f"Accuracy: {accuracy}")
+        object_number += 1
+
+    
     return clipwise_output, labels
 
 
