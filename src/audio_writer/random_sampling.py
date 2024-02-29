@@ -34,7 +34,35 @@ def move_files(training_folder, validation_folder):
 
     print(f"{total_validation_files} files moved to the Validation folder.")
 
+
+def move_files_with_term(source_dir, target_dir, term):
+    # Initialize counter for moved files
+    moved_files_count = 0
+
+    # Iterate through files in source_dir
+    for root, dirs, files in os.walk(source_dir):
+        for file in files:
+            # Check if the file name contains the term
+            if term in file:
+                # Construct source and target paths
+                src_path = os.path.join(root, file)
+                dst_path = os.path.join(target_dir, file)
+                # Move the file to the target directory
+                shutil.move(src_path, dst_path)
+                # Increment moved files count
+                moved_files_count += 1
+
+    # Print the number of files moved
+    print(f"Number of files moved: {moved_files_count}")
+
+
 if __name__ == '__main__':
+    source_dir = '/home/acrv/blaw_ws/ur5_control/src/SRP/src/4_mic_data/mp3_data/Training'
+    target_dir = '/home/acrv/blaw_ws/ur5_control/src/SRP/src/4_mic_data/mp3_data/mic1_data'
+    term = 'mic1'    
+    move_files_with_term(source_dir, target_dir, term)
+
     training_folder = '/home/acrv/blaw_ws/ur5_control/src/SRP/src/4_mic_data/mp3_data/Training'
     validation_folder = '/home/acrv/blaw_ws/ur5_control/src/SRP/src/4_mic_data/mp3_data/Validation'
-    move_files(training_folder, validation_folder)
+
+    #move_files(training_folder, validation_folder)
