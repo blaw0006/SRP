@@ -114,19 +114,23 @@ def pack_audio_files_to_hdf5(args):
             dtype=np.int32)
  
         for n in range(audios_num):
-            print(n) # this is the line printing file numbers that have been converted. Halts at around 500 - has issue around clip 500.
-            audio_name = meta_dict['audio_name'][n]
-            fold = meta_dict['fold'][n]
-            audio_path = meta_dict['audio_path'][n]
-            #(audio, fs) = librosa.core.load(audio_path, sr=sample_rate, mono=True)
-            (audio, fs) = librosa.load(audio_path, sr=sample_rate, mono=True) # specific line that is causing issues - update: upgrading package fixed it
+            try:
+                print(n) # this is the line printing file numbers that have been converted. Halts at around 500 - has issue around clip 500.
+                audio_name = meta_dict['audio_name'][n]
+                fold = meta_dict['fold'][n]
+                audio_path = meta_dict['audio_path'][n]
+                #(audio, fs) = librosa.core.load(audio_path, sr=sample_rate, mono=True)
+                (audio, fs) = librosa.load(audio_path, sr=sample_rate, mono=True) # specific line that is causing issues - update: upgrading package fixed it
 
-            audio = pad_truncate_sequence(audio, clip_samples)
+                audio = pad_truncate_sequence(audio, clip_samples)
 
-            hf['audio_name'][n] = audio_name.encode()
-            hf['waveform'][n] = float32_to_int16(audio)
-            hf['target'][n] = to_one_hot(meta_dict['target'][n], classes_num)
-            hf['fold'][n] = meta_dict['fold'][n]
+                hf['audio_name'][n] = audio_name.encode()
+                hf['waveform'][n] = float32_to_int16(audio)
+                hf['target'][n] = to_one_hot(meta_dict['target'][n], classes_num)
+                hf['fold'][n] = meta_dict['fold'][n]
+            except Exception as e:
+                print(e)
+                continue
 
     print('Write hdf5 to {}'.format(packed_hdf5_path))
     print('Time: {:.3f} s'.format(time.time() - feature_time))

@@ -181,7 +181,7 @@ def train(args):
                 train_bgn_time = time.time()
 
         # Save model 
-        if iteration % 2000 == 0 and iteration > 0:
+        if iteration % 1000 == 0 and iteration > 0: # changed this to save every 1000 iterations
             print('saving model')
             checkpoint = {
                 'iteration': iteration, 
